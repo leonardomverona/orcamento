@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão Financeira 360°</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #a855f7;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --primary-hover: #6366f1;
+            --secondary: #a78bfa;
+            --accent: #c084fc;
+            --success: #34d399;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header.app-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 2rem;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            background: var(--background);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-item i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            background: var(--background);
+            color: var(--text);
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .editable-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .editable-table th {
+            background: var(--surface);
+            color: var(--text-secondary);
+            padding: 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .editable-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .category-manager {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .category-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .category-tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+
+        .recent-files {
+            margin-top: 1rem;
+        }
+
+        .recent-files ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recent-files li {
+            padding: 0.75rem;
+            background: var(--background);
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .nav-tabs {
+                width: 100%;
+            }
+            
+            .nav-btn {
+                flex-grow: 1;
+                justify-content: center;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="app-title">
+                <i class="fas fa-coins"></i>
+                Finanças 360°
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-btn active" data-tab="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</button>
+                <button class="nav-btn" data-tab="transactions"><i class="fas fa-exchange-alt"></i> Transações</button>
+                <button class="nav-btn" data-tab="budget"><i class="fas fa-chart-line"></i> Orçamento</button>
+                <button class="nav-btn" data-tab="categories"><i class="fas fa-tags"></i> Categorias</button>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                    Modo Escuro
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="tab-content active" id="dashboard">
+            <div class="card">
+                <h2>Resumo Mensal</h2>
+                <div class="stats-grid">
+                    <div class="stat-item"><i class="fas fa-wallet"></i><h3>Total Orçado</h3><p>R$ <span id="totalBudget">0.00</span></p></div>
+                    <div class="stat-item"><i class="fas fa-dollar-sign"></i><h3>Total Realizado</h3><p>R$ <span id="totalRealized">0.00</span></p></div>
+                    <div class="stat-item"><i class="fas fa-balance-scale"></i><h3>Diferença</h3><p>R$ <span id="difference">0.00</span></p></div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Comparativo por Categoria</h2>
+                <canvas id="budgetChart" height="100"></canvas>
+            </div>
+        </section>
+
+        <section class="tab-content" id="transactions">
+            <div class="card">
+                <h2>Nova Transação</h2>
+                <form id="transactionForm" class="form-grid">
+                    <div class="input-group">
+                        <label for="transactionDate">Data</label>
+                        <input type="date" id="transactionDate" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="transactionDescription">Descrição</label>
+                        <input type="text" id="transactionDescription" value="Nova Transação" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="transactionType">Tipo</label>
+                        <select id="transactionType" required>
+                            <option value="despesa">Despesa</option>
+                            <option value="renda">Renda</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="categorySelect">Categoria</label>
+                        <select id="categorySelect" required></select>
+                    </div>
+                    <div class="input-group">
+                        <label for="transactionAmount">Valor (R$)</label>
+                        <input type="number" id="transactionAmount" step="0.01" min="0" value="0.00" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Adicionar</button>
+                </form>
+            </div>
+            <div class="card">
+                <h2>Histórico de Transações</h2>
+                <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="exportExcel"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+                    <button class="btn btn-primary" id="exportPDF"><i class="fas fa-file-pdf"></i> Exportar PDF</button>
+                    <button class="btn btn-primary" id="saveFile"><i class="fas fa-save"></i> Salvar</button>
+                    <label class="btn btn-primary" for="openFile"><i class="fas fa-folder-open"></i> Abrir</label>
+                    <input type="file" id="openFile" accept=".json" style="display: none;">
+                    <button class="btn btn-danger" id="clearAll"><i class="fas fa-trash-alt"></i> Limpar Tudo</button>
+                </div>
+                <div class="recent-files">
+                    <h3>Arquivos Recentes</h3>
+                    <ul id="recentFilesList"></ul>
+                </div>
+                <table class="editable-table">
+                    <thead>
+                        <tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="tab-content" id="budget">
+            <div class="card">
+                <h2>Orçamento Mensal</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="budgetMonth">Mês</label>
+                        <input type="month" id="budgetMonth" required>
+                    </div>
+                    <button class="btn btn-primary" id="loadBudget" type="button"><i class="fas fa-search"></i> Carregar</button>
+                </div>
+                <div id="budgetFormContainer" style="display:none;">
+                    <h3>Defina o orçamento para cada categoria</h3>
+                    <form id="budgetForm" class="form-grid"></form>
+                    <button class="btn btn-primary" id="saveBudget"><i class="fas fa-save"></i> Salvar Orçamento</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="tab-content" id="categories">
+            <div class="card">
+                <h2>Gerenciar Categorias</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="newCategory">Nova Categoria</label>
+                        <input type="text" id="newCategory" placeholder="Digite uma nova categoria">
+                    </div>
+                    <button class="btn btn-primary" id="addCategory" type="button"><i class="fas fa-plus"></i> Adicionar</button>
+                </div>
+                <div class="category-manager"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        'use strict';
+
+        class FinanceManager {
+            constructor() {
+                this.state = {
+                    balance: 0.00,
+                    categories: ['Alimentação', 'Moradia', 'Transporte', 'Lazer', 'Educação', 'Saúde'],
+                    transactions: [],
+                    budgets: {}
+                };
+                this.currentBudgetMonth = '';
+                this.recentFiles = this.loadRecentFiles();
+                this.chart = null;
+                this.init();
+            }
+
+            init() {
+                this.loadState();
+                this.setupTabs();
+                this.setupTheme();
+                this.setupEventListeners();
+                // Renderização inicial apenas para a aba ativa (Dashboard)
+                this.updateDashboard();
+            }
+
+            setupTheme() {
+                this.currentTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', this.currentTheme);
+                this.updateThemeButton();
+                
+                document.getElementById('themeToggle').addEventListener('click', () => {
+                    this.currentTheme = this.currentTheme === 'dark' ? 'light' : 'dark';
+                    document.documentElement.setAttribute('data-theme', this.currentTheme);
+                    localStorage.setItem('theme', this.currentTheme);
+                    this.updateThemeButton();
+                    if (this.chart) this.updateDashboard();
+                });
+            }
+
+            updateThemeButton() {
+                const themeToggle = document.getElementById('themeToggle');
+                themeToggle.innerHTML = this.currentTheme === 'dark' 
+                    ? `<i class="fas fa-sun"></i> Modo Claro`
+                    : `<i class="fas fa-moon"></i> Modo Escuro`;
+            }
+
+            setupEventListeners() {
+                // Transações
+                document.getElementById('transactionForm').addEventListener('submit', e => this.addTransaction(e));
+                document.querySelector('.editable-table tbody').addEventListener('blur', e => this.handleEdit(e), true);
+                document.querySelector('.editable-table tbody').addEventListener('click', e => this.handleTransactionDeletion(e));
+                
+                // Orçamento
+                document.getElementById('loadBudget').addEventListener('click', () => this.loadBudget());
+                document.getElementById('saveBudget').addEventListener('click', () => this.saveBudget());
+                
+                // Categorias
+                document.getElementById('addCategory').addEventListener('click', () => this.addCategory());
+                
+                // Arquivos
+                document.getElementById('exportExcel').addEventListener('click', () => this.exportToExcel());
+                document.getElementById('exportPDF').addEventListener('click', () => this.exportToPDF());
+                document.getElementById('saveFile').addEventListener('click', () => this.saveFile());
+                document.getElementById('openFile').addEventListener('change', (e) => this.openFile(e));
+                document.getElementById('clearAll').addEventListener('click', () => this.clearAllData());
+                document.getElementById('recentFilesList').addEventListener('click', (e) => this.handleRecentFileClick(e));
+            }
+
+            setupTabs() {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                        btn.classList.add('active');
+                        const tabContent = document.getElementById(btn.dataset.tab);
+                        tabContent.classList.add('active');
+
+                        // Chama a função correspondente ao abrir cada aba
+                        switch (btn.dataset.tab) {
+                            case 'dashboard':
+                                this.updateDashboard();
+                                break;
+                            case 'transactions':
+                                this.preFillTransactionForm();
+                                this.renderTransactions();
+                                this.renderRecentFiles();
+                                break;
+                            case 'budget':
+                                this.loadBudgetInitial();
+                                break;
+                            case 'categories':
+                                this.renderCategories();
+                                break;
+                        }
+                    });
+                });
+            }
+
+            preFillTransactionForm() {
+                const today = new Date().toISOString().slice(0, 10);
+                document.getElementById('transactionDate').value = today;
+                document.getElementById('transactionDescription').value = 'Nova Transação';
+                document.getElementById('transactionType').value = 'despesa';
+                this.renderCategorySelect();
+                document.getElementById('transactionAmount').value = '0.00';
+            }
+
+            updateDashboard() {
+                const month = this.currentBudgetMonth || new Date().toISOString().slice(0, 7);
+                const budgetData = this.state.budgets[month] || {};
+                const totalBudget = Object.values(budgetData).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
+                const totalRealized = this.state.transactions
+                    .filter(t => t.date.slice(0, 7) === month && t.type === 'despesa')
+                    .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+                document.getElementById('totalBudget').textContent = totalBudget.toFixed(2);
+                document.getElementById('totalRealized').textContent = totalRealized.toFixed(2);
+                document.getElementById('difference').textContent = (totalBudget - totalRealized).toFixed(2);
+
+                this.renderChart(budgetData, month);
+            }
+
+            renderChart(budgetData, month) {
+                const labels = this.state.categories;
+                const budgetValues = labels.map(cat => parseFloat(budgetData[cat]) || 0);
+                const actualValues = labels.map(cat =>
+                    this.state.transactions
+                        .filter(t => t.date.slice(0, 7) === month && t.type === 'despesa' && t.category === cat)
+                        .reduce((sum, t) => sum + parseFloat(t.amount), 0)
+                );
+
+                const ctx = document.getElementById('budgetChart').getContext('2d');
+                if (this.chart) this.chart.destroy();
+                this.chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [
+                            { label: 'Orçado', data: budgetValues, backgroundColor: 'rgba(99, 102, 241, 0.7)' },
+                            { label: 'Realizado', data: actualValues, backgroundColor: 'rgba(239, 68, 68, 0.7)' }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: { y: { beginAtZero: true, ticks: { color: 'var(--text)' } } },
+                        plugins: { legend: { position: 'bottom', labels: { color: 'var(--text)' } } }
+                    }
+                });
+            }
+
+            renderTransactions() {
+                const tbody = document.querySelector('.editable-table tbody');
+                tbody.innerHTML = this.state.transactions.map((t, i) => `
+                    <tr data-index="${i}">
+                        <td contenteditable="true" data-field="date">${t.date}</td>
+                        <td contenteditable="true" data-field="description">${t.description}</td>
+                        <td>${t.type === 'renda' ? 'Renda' : 'Despesa'}</td>
+                        <td>
+                            <select class="category-select" data-field="category">
+                                ${this.state.categories.map(cat => `<option ${t.category === cat ? 'selected' : ''} value="${cat}">${cat}</option>`).join('')}
+                            </select>
+                        </td>
+                        <td contenteditable="true" data-field="amount">${t.amount}</td>
+                        <td>
+                            <button class="btn btn-danger delete-transaction" aria-label="Excluir transação"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            addTransaction(e) {
+                e.preventDefault();
+                const form = e.target;
+                const transaction = {
+                    date: form.querySelector('#transactionDate').value,
+                    description: form.querySelector('#transactionDescription').value.trim(),
+                    type: form.querySelector('#transactionType').value,
+                    category: form.querySelector('#categorySelect').value,
+                    amount: parseFloat(form.querySelector('#transactionAmount').value).toFixed(2)
+                };
+                if (transaction.date && transaction.description && transaction.category && transaction.amount >= 0) {
+                    this.state.transactions.push(transaction);
+                    this.renderTransactions();
+                    this.updateDashboard();
+                    this.preFillTransactionForm();
+                    this.saveState();
+                } else {
+                    alert('Por favor, preencha todos os campos corretamente!');
+                }
+            }
+
+            handleEdit(e) {
+                const td = e.target;
+                if (td.hasAttribute('contenteditable')) {
+                    const index = td.closest('tr').dataset.index;
+                    const field = td.dataset.field;
+                    let value = td.textContent.trim();
+                    if (field === 'amount') value = parseFloat(value).toFixed(2) || '0.00';
+                    this.state.transactions[index][field] = value;
+                    this.saveState();
+                    this.updateDashboard();
+                } else if (td.classList.contains('category-select')) {
+                    const index = td.closest('tr').dataset.index;
+                    this.state.transactions[index].category = td.value;
+                    this.saveState();
+                    this.updateDashboard();
+                }
+            }
+
+            handleTransactionDeletion(e) {
+                if (e.target.closest('.delete-transaction')) {
+                    const index = e.target.closest('tr').dataset.index;
+                    this.state.transactions.splice(index, 1);
+                    this.renderTransactions();
+                    this.updateDashboard();
+                    this.saveState();
+                }
+            }
+
+            loadBudgetInitial() {
+                document.getElementById('budgetMonth').value = this.currentBudgetMonth || new Date().toISOString().slice(0, 7);
+                this.loadBudget();
+            }
+
+            loadBudget() {
+                this.currentBudgetMonth = document.getElementById('budgetMonth').value;
+                if (!this.currentBudgetMonth) return alert('Selecione um mês!');
+                const budgetData = this.state.budgets[this.currentBudgetMonth] || {};
+                const budgetForm = document.getElementById('budgetForm');
+                budgetForm.innerHTML = this.state.categories.map(cat => `
+                    <div class="input-group">
+                        <label for="budget_${cat}">${cat}</label>
+                        <input type="number" id="budget_${cat}" step="0.01" min="0" value="${budgetData[cat] || '0.00'}">
+                    </div>
+                `).join('');
+                document.getElementById('budgetFormContainer').style.display = 'block';
+            }
+
+            saveBudget() {
+                const budgetData = {};
+                this.state.categories.forEach(cat => {
+                    const val = document.getElementById(`budget_${cat}`).value;
+                    budgetData[cat] = parseFloat(val).toFixed(2) || '0.00';
+                });
+                this.state.budgets[this.currentBudgetMonth] = budgetData;
+                this.updateDashboard();
+                this.saveState();
+                alert('Orçamento salvo com sucesso!');
+            }
+
+            renderCategorySelect() {
+                const select = document.getElementById('categorySelect');
+                const selected = select.value || this.state.categories[0];
+                select.innerHTML = this.state.categories.map(cat => 
+                    `<option value="${cat}" ${cat === selected ? 'selected' : ''}>${cat}</option>`
+                ).join('');
+            }
+
+            renderCategories() {
+                this.renderCategorySelect();
+                const manager = document.querySelector('.category-manager');
+                manager.innerHTML = this.state.categories.map(cat => `
+                    <div class="category-tag">
+                        ${cat}
+                        <button class="btn-icon btn-danger" onclick="financeManager.deleteCategory('${cat}')" aria-label="Excluir categoria"><i class="fas fa-times"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            addCategory() {
+                const input = document.getElementById('newCategory');
+                const category = input.value.trim();
+                if (category && !this.state.categories.includes(category)) {
+                    this.state.categories.push(category);
+                    this.renderCategories();
+                    this.renderTransactions();
+                    input.value = '';
+                    this.saveState();
+                }
+            }
+
+            deleteCategory(category) {
+                this.state.categories = this.state.categories.filter(c => c !== category);
+                this.state.transactions = this.state.transactions.filter(t => t.category !== category);
+                for (let month in this.state.budgets) {
+                    delete this.state.budgets[month][category];
+                }
+                this.renderCategories();
+                this.renderTransactions();
+                this.updateDashboard();
+                this.saveState();
+            }
+
+            getComparativeData(month) {
+                const budgetData = this.state.budgets[month] || {};
+                const labels = this.state.categories;
+                const budgetValues = labels.map(cat => parseFloat(budgetData[cat]) || 0);
+                const actualValues = labels.map(cat =>
+                    this.state.transactions
+                        .filter(t => t.date.slice(0, 7) === month && t.type === 'despesa' && t.category === cat)
+                        .reduce((sum, t) => sum + parseFloat(t.amount), 0)
+                );
+                return labels.map((label, i) => [label, budgetValues[i].toFixed(2), actualValues[i].toFixed(2)]);
+            }
+
+            exportToExcel() {
+                const month = this.currentBudgetMonth || new Date().toISOString().slice(0, 7);
+                const budgetData = this.state.budgets[month] || {};
+
+                const summaryData = [
+                    ['Resumo Mensal', ''],
+                    ['Total Orçado', document.getElementById('totalBudget').textContent],
+                    ['Total Realizado', document.getElementById('totalRealized').textContent],
+                    ['Diferença', document.getElementById('difference').textContent],
+                    ['']
+                ];
+
+                const transactionsData = [
+                    ['Transações', '', '', '', ''],
+                    ['Data', 'Descrição', 'Tipo', 'Categoria', 'Valor'],
+                    ...this.state.transactions.map(t => [t.date, t.description, t.type === 'renda' ? 'Renda' : 'Despesa', t.category, t.amount]),
+                    ['']
+                ];
+
+                const budgetDataArray = [
+                    ['Orçamentos por Categoria', ''],
+                    ['Categoria', 'Valor'],
+                    ...Object.entries(budgetData).map(([cat, val]) => [cat, val]),
+                    ['']
+                ];
+
+                const comparativeData = [
+                    ['Comparativo por Categoria', '', ''],
+                    ['Categoria', 'Orçado', 'Realizado'],
+                    ...this.getComparativeData(month),
+                    ['']
+                ];
+
+                const ws = XLSX.utils.aoa_to_sheet([
+                    ...summaryData,
+                    ...transactionsData,
+                    ...budgetDataArray,
+                    ...comparativeData
+                ]);
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Relatório Completo');
+                XLSX.writeFile(wb, `relatorio_financeiro_${month}.xlsx`);
+            }
+
+            async exportToPDF() {
+                try {
+                    if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF não foi carregado.');
+                    if (!window.html2canvas) throw new Error('html2canvas não foi carregado.');
+
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF('p', 'mm', 'a4');
+                    const month = this.currentBudgetMonth || new Date().toISOString().slice(0, 7);
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const pageHeight = doc.internal.pageSize.getHeight();
+                    let yOffset = 10;
+
+                    const addHeader = () => {
+                        doc.setFillColor(99, 102, 241);
+                        doc.rect(0, 0, pageWidth, 20, 'F');
+                        doc.setFontSize(16);
+                        doc.setTextColor(255, 255, 255);
+                        doc.text(`Relatório Financeiro - ${month}`, 10, 15);
+                        yOffset = 30;
+                    };
+
+                    addHeader();
+
+                    doc.setFontSize(14);
+                    doc.setTextColor(30, 41, 59);
+                    doc.text('Resumo Mensal', 10, yOffset);
+                    yOffset += 10;
+                    doc.setFontSize(12);
+                    doc.text(`Total Orçado: R$ ${document.getElementById('totalBudget').textContent}`, 10, yOffset);
+                    yOffset += 7;
+                    doc.text(`Total Realizado: R$ ${document.getElementById('totalRealized').textContent}`, 10, yOffset);
+                    yOffset += 7;
+                    doc.text(`Diferença: R$ ${document.getElementById('difference').textContent}`, 10, yOffset);
+                    yOffset += 15;
+
+                    const transactionsTab = document.getElementById('transactions');
+                    const originalDisplay = transactionsTab.style.display;
+                    transactionsTab.style.display = 'block';
+
+                    if (this.state.transactions.length > 0) {
+                        const table = document.querySelector('.editable-table');
+                        const tableCanvas = await html2canvas(table, { scale: 1, backgroundColor: this.currentTheme === 'dark' ? '#0f172a' : '#ffffff' });
+                        const tableImgData = tableCanvas.toDataURL('image/png');
+                        if (!tableImgData || tableImgData === 'data:,') throw new Error('Imagem da tabela inválida ou vazia.');
+
+                        const tableProps = doc.getImageProperties(tableImgData);
+                        const tableWidth = pageWidth - 20;
+                        const tableHeight = (tableProps.height * tableWidth) / tableProps.width;
+
+                        if (yOffset + tableHeight > pageHeight - 20) {
+                            doc.addPage();
+                            addHeader();
+                        }
+                        doc.setFontSize(14);
+                        doc.text('Transações', 10, yOffset);
+                        yOffset += 10;
+                        doc.addImage(tableImgData, 'PNG', 10, yOffset, tableWidth, tableHeight);
+                        yOffset += tableHeight + 15;
+                    } else {
+                        doc.setFontSize(14);
+                        doc.text('Transações', 10, yOffset);
+                        yOffset += 10;
+                        doc.setFontSize(12);
+                        doc.text('Nenhuma transação registrada.', 10, yOffset);
+                        yOffset += 15;
+                    }
+
+                    transactionsTab.style.display = originalDisplay;
+
+                    const dashboardTab = document.getElementById('dashboard');
+                    const dashboardDisplay = dashboardTab.style.display;
+                    dashboardTab.style.display = 'block';
+
+                    const chartCanvas = document.getElementById('budgetChart');
+                    const chartImg = await html2canvas(chartCanvas, { scale: 1, backgroundColor: this.currentTheme === 'dark' ? '#0f172a' : '#ffffff' });
+                    const chartImgData = chartImg.toDataURL('image/png');
+                    if (!chartImgData || chartImgData === 'data:,') throw new Error('Imagem do gráfico inválida ou vazia.');
+
+                    const chartProps = doc.getImageProperties(chartImgData);
+                    const chartWidth = pageWidth - 20;
+                    const chartHeight = (chartProps.height * chartWidth) / chartProps.width;
+
+                    if (yOffset + chartHeight > pageHeight - 20) {
+                        doc.addPage();
+                        addHeader();
+                    }
+                    doc.setFontSize(14);
+                    doc.text('Gráfico Comparativo', 10, yOffset);
+                    yOffset += 10;
+                    doc.addImage(chartImgData, 'PNG', 10, yOffset, chartWidth, chartHeight);
+
+                    dashboardTab.style.display = dashboardDisplay;
+
+                    doc.save(`relatorio_financeiro_${month}.pdf`);
+                } catch (error) {
+                    console.error('Erro ao gerar PDF:', error);
+                    alert(`Erro ao gerar o PDF: ${error.message}`);
+                }
+            }
+
+            saveFile() {
+                const timestamp = new Date().toISOString().slice(0, 10);
+                const filename = `repositorio_financeiro_${timestamp}.json`;
+                const dataStr = JSON.stringify(this.state, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                this.addToRecentFiles(filename);
+                this.renderRecentFiles();
+            }
+
+            openFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedState = JSON.parse(e.target.result);
+                        if (this.validateImportedState(importedState)) {
+                            this.state = importedState;
+                            this.saveState();
+                            this.renderCategories();
+                            this.renderTransactions();
+                            this.updateDashboard();
+                            this.addToRecentFiles(file.name);
+                            this.renderRecentFiles();
+                            alert('Arquivo carregado com sucesso!');
+                        } else {
+                            alert('O arquivo contém dados inválidos ou está incompleto!');
+                        }
+                    } catch (error) {
+                        alert('Erro ao carregar o arquivo: formato inválido!');
+                    }
+                };
+                reader.readAsText(file);
+                event.target.value = '';
+            }
+
+            validateImportedState(state) {
+                return (
+                    state &&
+                    typeof state.balance === 'number' &&
+                    Array.isArray(state.categories) &&
+                    Array.isArray(state.transactions) &&
+                    typeof state.budgets === 'object'
+                );
+            }
+
+            addToRecentFiles(filename) {
+                const date = new Date().toISOString();
+                const existingIndex = this.recentFiles.findIndex(f => f.name === filename);
+                if (existingIndex !== -1) {
+                    this.recentFiles.splice(existingIndex, 1);
+                }
+                this.recentFiles.unshift({ name: filename, date });
+                if (this.recentFiles.length > 5) {
+                    this.recentFiles.pop();
+                }
+                localStorage.setItem('recentFiles', JSON.stringify(this.recentFiles));
+            }
+
+            loadRecentFiles() {
+                const saved = localStorage.getItem('recentFiles');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            renderRecentFiles() {
+                const list = document.getElementById('recentFilesList');
+                list.innerHTML = this.recentFiles.map(file => `
+                    <li data-filename="${file.name}">
+                        ${file.name} <span>(${new Date(file.date).toLocaleString()})</span>
+                    </li>
+                `).join('');
+            }
+
+            handleRecentFileClick(event) {
+                const li = event.target.closest('li');
+                if (li) {
+                    const filename = li.dataset.filename;
+                    alert(`Por favor, use o botão "Abrir" para carregar o arquivo: ${filename}`);
+                    document.getElementById('openFile').click();
+                }
+            }
+
+            clearAllData() {
+                if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+                    this.state = {
+                        balance: 0.00,
+                        categories: ['Alimentação', 'Moradia', 'Transporte', 'Lazer', 'Educação', 'Saúde'],
+                        transactions: [],
+                        budgets: {}
+                    };
+                    this.currentBudgetMonth = '';
+                    this.saveState();
+                    this.renderCategories();
+                    this.renderTransactions();
+                    this.updateDashboard();
+                    alert('Todos os dados foram limpos com sucesso!');
+                }
+            }
+
+            saveState() {
+                localStorage.setItem('financeManager', JSON.stringify(this.state));
+            }
+
+            loadState() {
+                const saved = localStorage.getItem('financeManager');
+                if (saved) this.state = JSON.parse(saved);
+            }
+        }
+
+        // Inicialização da aplicação
+        const financeManager = new FinanceManager();
+        window.financeManager = financeManager;
+    </script>
+</body>
+</html>
