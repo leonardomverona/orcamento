@@ -2,6 +2,8 @@
 
 <html data-theme="light" lang="pt-BR">
 <head>
+<!-- Atenção: NÃO insira a client_secret em código front‑end. Ela foi omitida por segurança. Para fluxos client‑side, apenas CLIENT_ID, API_KEY e APP_ID são necessários. -->
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Gestão Financeira 360° - Novo Design</title>
@@ -828,213 +830,7 @@
 header i, nav i, .header i, .navbar i {
     color: var(--accent-color) !important;
 }
-</style>
-<!-- ==== Google Drive OAuth Redirect Integration ==== -->
-<script>
-const CLIENT_ID = '748081435922-691j3oqmg5l2ajb1jge69lf9dgucgg0n.apps.googleusercontent.com';
-const API_KEY   = 'AIzaSyDSvh_aeKlVrSFS-usGqTiys6rt25J0Nwk';
-const APP_ID    = '748081435922'; // Project number
-const SCOPES    = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
-
-// Global state
-let accessToken = null;
-let pickerApiLoaded = false;
-
-function parseHashParams() {
-    if (window.location.hash) {
-        const params = new URLSearchParams(window.location.hash.substring(1));
-        if (params.has('access_token')) {
-            accessToken = params.get('access_token');
-            // Remove token from URL for cleanliness
-            history.replaceState(null, '', window.location.pathname + window.location.search);
-        }
-    }
-}
-
-// Load GAPI Picker and Drive client
-function onGapiLoad() {
-    gapi.load('client:picker', initGapiClient);
-}
-
-async function initGapiClient() {
-    try {
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-        });
-        pickerApiLoaded = true;
-        maybeEnableDriveButtons();
-        if (accessToken) {
-            loadLastDriveFile();
-        }
-    } catch (err) {
-        console.error('gapi.client.init error', err);
-    }
-}
-
-// OAuth redirect flow
-function connectGoogle() {
-    const redirectUri = window.location.origin + window.location.pathname;
-    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth' +
-        '?response_type=token' +
-        '&client_id=' + encodeURIComponent(CLIENT_ID) +
-        '&redirect_uri=' + encodeURIComponent(redirectUri) +
-        '&scope=' + encodeURIComponent(SCOPES) +
-        '&include_granted_scopes=true' +
-        '&prompt=consent';
-    window.location.href = authUrl;
-}
-
-function signOutGoogle() {
-    accessToken = null;
-    maybeEnableDriveButtons();
-    document.getElementById('google-connect-btn').style.display = 'inline-block';
-    document.getElementById('google-logout-btn').style.display = 'none';
-}
-
-// Enable/disable drive buttons based on state
-function maybeEnableDriveButtons() {
-    const openBtn = document.getElementById('btn-open-drive');
-    const saveBtn = document.getElementById('btn-save-drive');
-    if (!openBtn || !saveBtn) return;
-    const enabled = pickerApiLoaded && accessToken;
-    openBtn.disabled = !enabled;
-    saveBtn.disabled = !enabled;
-    if (enabled) {
-        document.getElementById('google-connect-btn').style.display = 'none';
-        document.getElementById('google-logout-btn').style.display = 'inline-block';
-    }
-}
-
-// Google Picker open
-function openFromDrive() {
-    if (!pickerApiLoaded || !accessToken) return;
-    const view = new google.picker.View(google.picker.ViewId.DOCS);
-    view.setMimeTypes('application/json');
-    const picker = new google.picker.PickerBuilder()
-        .setAppId(APP_ID)
-        .setOAuthToken(accessToken)
-        .addView(view)
-        .setDeveloperKey(API_KEY)
-        .setCallback(pickerCallback)
-        .build();
-    picker.setVisible(true);
-}
-
-function pickerCallback(data) {
-    if (data.action === google.picker.Action.PICKED) {
-        const fileId = data.docs[0].id;
-        gapi.client.drive.files.get({ fileId, alt: 'media' }).then(res => {
-            try {
-                const jsonData = JSON.parse(res.body);
-                if (window.importStateFromJSON) {
-                    window.importStateFromJSON(jsonData);
-                    alert('Dados importados do Google Drive!');
-                }
-            } catch (e) {
-                alert('Erro ao ler o arquivo JSON selecionado.');
-            }
-        });
-    }
-}
-
-// Save current state to Drive
-function saveToDrive() {
-    if (!accessToken) return;
-    if (!window.exportStateToJSON) {
-        alert('Função exportStateToJSON não encontrada.');
-        return;
-    }
-    const fileContent = JSON.stringify(window.exportStateToJSON());
-    const metadata = { name: 'financas360_dados.json', mimeType: 'application/json' };
-    const boundary = '-------314159265358979323846';
-    const delimiter = '\r\n--' + boundary + '\r\n';
-    const closeDelim = '\r\n--' + boundary + '--';
-    const multipartRequestBody =
-        delimiter + 'Content-Type: application/json\r\n\r\n' +
-        JSON.stringify(metadata) +
-        delimiter + 'Content-Type: application/json\r\n\r\n' +
-        fileContent + closeDelim;
-
-    gapi.client.request({
-        path: '/upload/drive/v3/files',
-        method: 'POST',
-        params: { uploadType: 'multipart' },
-        headers: { 'Content-Type': 'multipart/related; boundary="' + boundary + '"' },
-        body: multipartRequestBody
-    }).then(file => {
-        if (file && file.result && file.result.id) {
-            alert('Arquivo salvo no seu Google Drive!');
-        } else {
-            alert('Falha ao salvar no Drive.');
-            console.error(file);
-        }
-    });
-}
-
-// Load most recent file
-function loadLastDriveFile() {
-    gapi.client.drive.files.list({
-        q: "name='financas360_dados.json' and trashed=false",
-        orderBy: 'modifiedTime desc',
-        pageSize: 1,
-        fields: 'files(id,name)'
-    }).then(res => {
-        const files = res.result.files;
-        if (files && files.length > 0) {
-            const fileId = files[0].id;
-            gapi.client.drive.files.get({ fileId, alt: 'media' }).then(r => {
-                try {
-                    const jsonData = JSON.parse(r.body);
-                    if (window.importStateFromJSON) {
-                        window.importStateFromJSON(jsonData);
-                        console.log('Último estado carregado do Drive.');
-                    }
-                } catch (e) {
-                    console.error('Erro ao carregar JSON do Drive', e);
-                }
-            });
-        }
-    });
-}
-
-// Insert Drive buttons in actions menu
-function addDriveButtons() {
-    const menu = document.getElementById('actionsDropdownContent');
-    if (!menu) return;
-    if (document.getElementById('btn-open-drive')) return; // already added
-
-    const openBtn = document.createElement('button');
-    openBtn.id = 'btn-open-drive';
-    openBtn.className = 'nav-btn-dropdown-item';
-    openBtn.innerHTML = '<i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir do Drive';
-    openBtn.onclick = openFromDrive;
-    openBtn.disabled = true;
-    menu.appendChild(openBtn);
-
-    const saveBtn = document.createElement('button');
-    saveBtn.id = 'btn-save-drive';
-    saveBtn.className = 'nav-btn-dropdown-item';
-    saveBtn.innerHTML = '<i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar no Drive';
-    saveBtn.onclick = saveToDrive;
-    saveBtn.disabled = true;
-    menu.appendChild(saveBtn);
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    parseHashParams();
-    addDriveButtons();
-    // Google connect / logout button events
-    const connectBtn = document.getElementById('google-connect-btn');
-    if (connectBtn) connectBtn.addEventListener('click', connectGoogle);
-    const logoutBtn = document.getElementById('google-logout-btn');
-    if (logoutBtn) logoutBtn.addEventListener('click', signOutGoogle);
-});
-</script>
-<script src="https://apis.google.com/js/api.js?onload=onGapiLoad" async defer></script>
-<!-- =============================================== -->
-
-</head>
+</style></head>
 <body>
 <header class="app-header">
 <div class="header-content">
@@ -1058,7 +854,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 </div>
 </nav>
-
 <button id="google-connect-btn" class="nav-btn"><i class="fab fa-google-drive"></i> Conectar Google</button>
 <button id="google-logout-btn" class="nav-btn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Sair</button>
 
@@ -3316,6 +3111,231 @@ document.addEventListener('DOMContentLoaded', () => {
         financeManager.updateBudgetDashboard();
     }
 });
+</script>
+
+<!-- Google Identity & Picker -->
+<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+<script src="https://apis.google.com/js/api.js?onload=gapiLoaded"></script>
+
+<script>
+/* ======= GOOGLE DRIVE INTEGRATION (MULTI-USER) ======= */
+// Replace with your app credentials (Client ID and API Key are NOT secret)
+const CLIENT_ID = '748081435922-691j3oqmg5l2ajb1jge69lf9dgucgg0n.apps.googleusercontent.com';
+const API_KEY   = 'AIzaSyDSvh_aeKlVrSFS-usGqTiys6rt25J0Nwk';
+const APP_ID    = '748081435922';  
+
+const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
+
+// Global variables
+let tokenClient;
+let accessToken = null;
+let pickerApiLoaded = false;
+
+// On load, gapiLoaded is called from api.js
+function gapiLoaded() {
+    gapi.load('client:picker', initializeGapiClient);
+}
+
+async function initializeGapiClient() {
+    try {
+        await gapi.client.init({
+            apiKey: API_KEY,
+            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+        });
+        pickerApiLoaded = true;
+        maybeEnableButtons();
+    } catch (err) {
+        console.error('gapi.client.init error', err);
+    }
+}
+
+// Called by GIS onload
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        prompt: '',
+        callback: handleTokenResponse,
+        error_callback: (err) => {
+            console.error('OAuth error', err);
+            alert('Erro de autenticação Google: ' + (err.error || JSON.stringify(err)));
+        }
+    });
+    document.getElementById('google-connect-btn').addEventListener('click', () => {
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+    });
+    document.getElementById('google-logout-btn').addEventListener('click', signOut );
+}
+
+function handleTokenResponse(response) {
+    if (response.error !== undefined) {
+        alert('Erro ao obter token: ' + response.error);
+        return;
+    }
+    accessToken = response.access_token;
+    console.log('Google accessToken acquired');
+    document.getElementById('google-connect-btn').style.display = 'none';
+    document.getElementById('google-logout-btn').style.display = 'inline-block';
+    maybeEnableButtons();
+    loadLastDriveFile();
+}
+
+function signOut() {
+    if (accessToken) {
+        google.accounts.oauth2.revoke(accessToken, () => {
+            accessToken = null;
+            document.getElementById('google-connect-btn').style.display = 'inline-block';
+            document.getElementById('google-logout-btn').style.display = 'none';
+            toggleDriveButtons(false);
+            console.log('Google disconnected');
+        });
+    }
+}
+
+function maybeEnableButtons() {
+    const openBtn = document.getElementById('btn-open-drive');
+    const saveBtn = document.getElementById('btn-save-drive');
+    if (pickerApiLoaded && accessToken) {
+        openBtn.disabled = false;
+        saveBtn.disabled = false;
+    }
+}
+
+// ----- UI BUTTONS in ACTIONS MENU -----
+function createDriveButtons() {
+    const actions = document.getElementById('filters-actions') || document.body;
+    const openBtn = document.createElement('button');
+    openBtn.id = 'btn-open-drive';
+    openBtn.textContent = '📂 Abrir do Drive';
+    openBtn.disabled = true;
+    openBtn.className = 'btn-add';
+    openBtn.onclick = openFromDrive;
+    actions.appendChild(openBtn);
+
+    const saveBtn = document.createElement('button');
+    saveBtn.id = 'btn-save-drive';
+    saveBtn.textContent = '💾 Salvar no Drive';
+    saveBtn.disabled = true;
+    saveBtn.className = 'btn-add';
+    saveBtn.onclick = saveToDrive;
+    actions.appendChild(saveBtn);
+}
+
+document.addEventListener('DOMContentLoaded', createDriveButtons);
+
+// ----- DRIVE OPERATIONS -----
+function openFromDrive() {
+    if (!pickerApiLoaded || !accessToken) return;
+    const view = new google.picker.View(google.picker.ViewId.DOCS);
+    view.setMimeTypes('application/json');
+
+    const picker = new google.picker.PickerBuilder()
+        .setAppId(APP_ID)
+        .setOAuthToken(accessToken)
+        .addView(view)
+        .setDeveloperKey(API_KEY)
+        .setCallback(pickerCallback)
+        .build();
+    picker.setVisible(true);
+}
+
+function pickerCallback(data) {
+    if (data.action === google.picker.Action.PICKED) {
+        const fileId = data.docs[0].id;
+        gapi.client.drive.files.get({
+            fileId: fileId,
+            alt: 'media'
+        }).then(res => {
+            const content = res.body;
+            try {
+                const jsonData = JSON.parse(content);
+                // Implement your app's import logic here
+                if (window.importStateFromJSON) {
+                    window.importStateFromJSON(jsonData);
+                    alert('Dados importados do Google Drive!');
+                }
+            } catch (e) {
+                alert('Erro ao ler o arquivo JSON selecionado.');
+            }
+        });
+    }
+}
+
+function saveToDrive() {
+    if (!accessToken) return;
+    if (!window.exportStateToJSON) {
+        alert('Função exportStateToJSON não encontrada.');
+        return;
+    }
+    const fileContent = JSON.stringify(window.exportStateToJSON());
+    const metadata = {
+        name: 'financas360_dados.json',
+        mimeType: 'application/json'
+    };
+    const boundary = '-------314159265358979323846';
+    const delimiter = "\r\n--" + boundary + "\r\n";
+    const closeDelim = "\r\n--" + boundary + "--";
+    const multipartRequestBody =
+        delimiter +
+        "Content-Type: application/json\r\n\r\n" +
+        JSON.stringify(metadata) +
+        delimiter +
+        "Content-Type: application/json\r\n\r\n" +
+        fileContent +
+        closeDelim;
+
+    const request = gapi.client.request({
+        path: '/upload/drive/v3/files',
+        method: 'POST',
+        params: { uploadType: 'multipart' },
+        headers: { 'Content-Type': 'multipart/related; boundary="' + boundary + '"' },
+        body: multipartRequestBody
+    });
+    request.execute((file) => {
+        if (file && file.id) {
+            alert('Arquivo salvo no seu Google Drive!');
+        } else {
+            alert('Falha ao salvar no Drive.');
+            console.error(file);
+        }
+    });
+}
+
+function loadLastDriveFile() {
+    if (!accessToken) return;
+    gapi.client.drive.files.list({
+        q: "name='financas360_dados.json' and trashed=false",
+        orderBy: 'modifiedTime desc',
+        pageSize: 1,
+        fields: 'files(id, name)'
+    }).then(res => {
+        const files = res.result.files;
+        if (files && files.length > 0) {
+            const fileId = files[0].id;
+            gapi.client.drive.files.get({
+                fileId: fileId,
+                alt: 'media'
+            }).then(r => {
+                const content = r.body;
+                try {
+                    const jsonData = JSON.parse(content);
+                    if (window.importStateFromJSON) {
+                        window.importStateFromJSON(jsonData);
+                        console.log('Último estado carregado do Drive.');
+                    }
+                } catch (e) {
+                    console.error('Erro ao carregar JSON do Drive', e);
+                }
+            });
+        }
+    });
+}
+
+function toggleDriveButtons(enabled) {
+    document.getElementById('btn-open-drive').disabled = !enabled;
+    document.getElementById('btn-save-drive').disabled = !enabled;
+}
+
 </script>
 </body>
 </html>
