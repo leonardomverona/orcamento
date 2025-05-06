@@ -3337,5 +3337,45 @@ function toggleDriveButtons(enabled) {
 }
 
 </script>
+
+<!-- ===== PATCH: Override updateBudgetTotals to fix cards ===== -->
+<script>
+/**
+ * Override of FinanceManager.prototype.updateBudgetTotals
+ * - Correctly updates income, expenses and planned balance cards in real‑time
+ * - Keeps per‑category totals and dashboard in sync
+ */
+FinanceManager.prototype.updateBudgetTotals = function () {
+    if (!this.currentBudgetMonth) return;
+
+    const budgetData = this.getMonthlyData(this.currentBudgetMonth).budget || {generalIncome:'0.00',incomeItems:[],expenseItems:{}};
+
+    const totalIncome = (parseFloat(budgetData.generalIncome)||0) +
+        (budgetData.incomeItems||[]).reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+
+    let totalExpenses = 0;
+    for (const cat in budgetData.expenseItems) {
+        if (Array.isArray(budgetData.expenseItems[cat])) {
+            totalExpenses += budgetData.expenseItems[cat]
+                .reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+        }
+        // keep per‑category header updated
+        this.updateCategoryTotal(cat);
+    }
+
+    // live‑update budget dashboard cards
+    const incomeEl   = document.getElementById('budgetTotalIncome');
+    const expenseEl  = document.getElementById('budgetTotalExpenses');
+    const balanceEl  = document.getElementById('budgetPlannedBalance');
+    if (incomeEl)  incomeEl.textContent  = totalIncome.toFixed(2);
+    if (expenseEl) expenseEl.textContent = totalExpenses.toFixed(2);
+    if (balanceEl) balanceEl.textContent = (totalIncome-totalExpenses).toFixed(2);
+
+    // keep main dashboard consistent if user is on same month
+    this.updateDashboardIfCurrent();
+};
+</script>
+<!-- ===== END PATCH ===== -->
+
 </body>
 </html>
