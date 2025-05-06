@@ -830,7 +830,8 @@
 header i, nav i, .header i, .navbar i {
     color: var(--accent-color) !important;
 }
-</style></head>
+</style><style>header.app-header { transition: transform 0.3s ease; }</style>
+</head>
 <body>
 <header class="app-header">
 <div class="header-content">
@@ -844,6 +845,8 @@ header i, nav i, .header i, .navbar i {
 <div class="actions-dropdown">
 <button class="nav-btn" id="actionsButton"><i class="fas fa-ellipsis-h" style="color: var(--accent-color);"></i> Ações</button>
 <div class="dropdown-content" id="actionsDropdownContent">
+                    <button id="driveSaveBtn"><i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar no Drive</button>
+                    <button id="driveOpenBtn"><i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir no Drive</button>
 <button id="clearDataBtn"><i class="fas fa-trash" style="color: var(--accent-color);"></i> Apagar Dados</button>
 <button id="saveFile"><i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar Dados</button>
 <button id="saveHtmlBtn"><i class="fas fa-download" style="color: var(--accent-color);"></i> Salvar HTML</button>
@@ -865,6 +868,18 @@ header i, nav i, .header i, .navbar i {
 </div>
 </div>
 </header>
+<script>
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
+        const header = document.querySelector('header.app-header');
+        if (window.scrollY > lastScrollY) {
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            header.style.transform = 'translateY(0)';
+        }
+        lastScrollY = window.scrollY;
+    });
+</script>
 <main class="container">
 <section class="tab-content active" id="dashboard">
 <div class="card">
@@ -1039,6 +1054,7 @@ header i, nav i, .header i, .navbar i {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
 <script>
         'use strict';
 
@@ -3337,172 +3353,5 @@ function toggleDriveButtons(enabled) {
 }
 
 </script>
-
-<!-- ===== PATCH: Override updateBudgetTotals to fix cards ===== -->
-<script>
-/**
- * Override of FinanceManager.prototype.updateBudgetTotals
- * - Correctly updates income, expenses and planned balance cards in real‑time
- * - Keeps per‑category totals and dashboard in sync
- */
-FinanceManager.prototype.updateBudgetTotals = function () {
-    if (!this.currentBudgetMonth) return;
-
-    const budgetData = this.getMonthlyData(this.currentBudgetMonth).budget || {generalIncome:'0.00',incomeItems:[],expenseItems:{}};
-
-    const totalIncome = (parseFloat(budgetData.generalIncome)||0) +
-        (budgetData.incomeItems||[]).reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
-
-    let totalExpenses = 0;
-    for (const cat in budgetData.expenseItems) {
-        if (Array.isArray(budgetData.expenseItems[cat])) {
-            totalExpenses += budgetData.expenseItems[cat]
-                .reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
-        }
-        // keep per‑category header updated
-        this.updateCategoryTotal(cat);
-    }
-
-    // live‑update budget dashboard cards
-    const incomeEl   = document.getElementById('budgetTotalIncome');
-    const expenseEl  = document.getElementById('budgetTotalExpenses');
-    const balanceEl  = document.getElementById('budgetPlannedBalance');
-    if (incomeEl)  incomeEl.textContent  = totalIncome.toFixed(2);
-    if (expenseEl) expenseEl.textContent = totalExpenses.toFixed(2);
-    if (balanceEl) balanceEl.textContent = (totalIncome-totalExpenses).toFixed(2);
-
-    // keep main dashboard consistent if user is on same month
-    this.updateDashboardIfCurrent();
-};
-</script>
-<!-- ===== END PATCH ===== -->
-
-
-<!-- ===== Google Drive integration ===== -->
-<script>
-/* global gapi, google, financeManager */
-const driveManager = {
-    developerKey: 'AIzaSyDSvh_aeKlVrSFS-usGqTiys6rt25J0Nwk',
-    clientId: '748081435922-691j3oqmg5l2ajb1jge69lf9dgucgg0n.apps.googleusercontent.com',
-    appId: '748081435922',
-    scope: 'https://www.googleapis.com/auth/drive.file',
-    pickerApiLoaded: false,
-    oauthToken: null,
-    openedFileId: null,
-    init: function () {
-        gapi.load('client:auth2', () => {
-            gapi.client.init({
-                apiKey: this.developerKey,
-                clientId: this.clientId,
-                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-                scope: this.scope
-            }).then(() => {
-                this.pickerApiLoaded = true;
-            });
-        });
-    },
-    authenticate: function (callback) {
-        const authInstance = gapi.auth2.getAuthInstance();
-        if (!authInstance) return alert('Falha ao inicializar Google Auth.');
-        authInstance.signIn().then(user => {
-            this.oauthToken = user.getAuthResponse().access_token;
-            if (typeof callback === 'function') callback();
-        }).catch(err => {
-            console.error('Auth error', err);
-        });
-    },
-    openFromDrive: function () {
-        if (!this.pickerApiLoaded) return alert('Google APIs ainda carregando, tente novamente.');
-        if (!this.oauthToken) return this.authenticate(this.openFromDrive.bind(this));
-
-        gapi.load('picker', () => {
-            const view = new google.picker.View(google.picker.ViewId.DOCS);
-            view.setMimeTypes('application/json');
-            const picker = new google.picker.PickerBuilder()
-                .addView(view)
-                .setOAuthToken(this.oauthToken)
-                .setDeveloperKey(this.developerKey)
-                .setAppId(this.appId)
-                .setCallback(this.pickerCallback.bind(this))
-                .build();
-            picker.setVisible(true);
-        });
-    },
-    pickerCallback: function (data) {
-        if (data.action === google.picker.Action.PICKED) {
-            const fileId = data.docs[0].id;
-            this.openedFileId = fileId;
-            gapi.client.drive.files.get({fileId: fileId, alt: 'media'}).then(resp => {
-                try {
-                    const jsonData = JSON.parse(resp.body);
-                    if (window.financeManager && typeof financeManager.importData === 'function') {
-                        financeManager.importData(jsonData);
-                    } else if (window.financeManager && typeof financeManager.loadData === 'function') {
-                        financeManager.loadData(jsonData);
-                    } else {
-                        alert('Função de importação não encontrada.');
-                    }
-                } catch (e) {
-                    console.error(e);
-                    alert('Erro ao ler arquivo JSON.');
-                }
-            });
-        }
-    },
-    saveToDrive: function () {
-        if (!this.oauthToken) return this.authenticate(this.saveToDrive.bind(this));
-
-        if (!window.financeManager || typeof financeManager.exportData !== 'function') {
-            return alert('Função de exportação não encontrada.');
-        }
-        const fileContent = JSON.stringify(financeManager.exportData());
-        const boundary = '-------314159265358979323846';
-        const delimiter = '\r\n--' + boundary + '\r\n';
-        const closeDelim = '\r\n--' + boundary + '--';
-
-        const metadata = {
-            name: 'budget_' + new Date().toISOString().split('T')[0] + '.json',
-            mimeType: 'application/json'
-        };
-        const multipartRequestBody =
-            delimiter + 'Content-Type: application/json\r\n\r\n' +
-            JSON.stringify(metadata) +
-            delimiter + 'Content-Type: application/json\r\n\r\n' +
-            fileContent +
-            closeDelim;
-
-        const params = {uploadType: 'multipart'};
-        const path   = this.openedFileId ? '/upload/drive/v3/files/' + this.openedFileId : '/upload/drive/v3/files';
-        const method = this.openedFileId ? 'PATCH' : 'POST';
-
-        const request = gapi.client.request({
-            path: path,
-            method: method,
-            params: params,
-            headers: {'Content-Type': 'multipart/related; boundary=' + boundary},
-            body: multipartRequestBody
-        });
-
-        request.execute(file => {
-            if (file && file.id) {
-                this.openedFileId = file.id;
-                alert('Arquivo salvo no Drive: ' + file.name);
-            } else {
-                alert('Falha ao salvar no Drive.');
-            }
-        });
-    }
-};
-
-window.addEventListener('DOMContentLoaded', () => {
-    if (window.gapi) {
-        driveManager.init();
-    } else {
-        console.error('gapi não carregado.');
-    }
-});
-</script>
-<!-- ===== end Google Drive integration ===== -->
-
 </body>
 </html>
