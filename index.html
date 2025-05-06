@@ -3377,5 +3377,132 @@ FinanceManager.prototype.updateBudgetTotals = function () {
 </script>
 <!-- ===== END PATCH ===== -->
 
+
+<!-- ===== Google Drive integration ===== -->
+<script>
+/* global gapi, google, financeManager */
+const driveManager = {
+    developerKey: 'AIzaSyDSvh_aeKlVrSFS-usGqTiys6rt25J0Nwk',
+    clientId: '748081435922-691j3oqmg5l2ajb1jge69lf9dgucgg0n.apps.googleusercontent.com',
+    appId: '748081435922',
+    scope: 'https://www.googleapis.com/auth/drive.file',
+    pickerApiLoaded: false,
+    oauthToken: null,
+    openedFileId: null,
+    init: function () {
+        gapi.load('client:auth2', () => {
+            gapi.client.init({
+                apiKey: this.developerKey,
+                clientId: this.clientId,
+                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
+                scope: this.scope
+            }).then(() => {
+                this.pickerApiLoaded = true;
+            });
+        });
+    },
+    authenticate: function (callback) {
+        const authInstance = gapi.auth2.getAuthInstance();
+        if (!authInstance) return alert('Falha ao inicializar Google Auth.');
+        authInstance.signIn().then(user => {
+            this.oauthToken = user.getAuthResponse().access_token;
+            if (typeof callback === 'function') callback();
+        }).catch(err => {
+            console.error('Auth error', err);
+        });
+    },
+    openFromDrive: function () {
+        if (!this.pickerApiLoaded) return alert('Google APIs ainda carregando, tente novamente.');
+        if (!this.oauthToken) return this.authenticate(this.openFromDrive.bind(this));
+
+        gapi.load('picker', () => {
+            const view = new google.picker.View(google.picker.ViewId.DOCS);
+            view.setMimeTypes('application/json');
+            const picker = new google.picker.PickerBuilder()
+                .addView(view)
+                .setOAuthToken(this.oauthToken)
+                .setDeveloperKey(this.developerKey)
+                .setAppId(this.appId)
+                .setCallback(this.pickerCallback.bind(this))
+                .build();
+            picker.setVisible(true);
+        });
+    },
+    pickerCallback: function (data) {
+        if (data.action === google.picker.Action.PICKED) {
+            const fileId = data.docs[0].id;
+            this.openedFileId = fileId;
+            gapi.client.drive.files.get({fileId: fileId, alt: 'media'}).then(resp => {
+                try {
+                    const jsonData = JSON.parse(resp.body);
+                    if (window.financeManager && typeof financeManager.importData === 'function') {
+                        financeManager.importData(jsonData);
+                    } else if (window.financeManager && typeof financeManager.loadData === 'function') {
+                        financeManager.loadData(jsonData);
+                    } else {
+                        alert('Função de importação não encontrada.');
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('Erro ao ler arquivo JSON.');
+                }
+            });
+        }
+    },
+    saveToDrive: function () {
+        if (!this.oauthToken) return this.authenticate(this.saveToDrive.bind(this));
+
+        if (!window.financeManager || typeof financeManager.exportData !== 'function') {
+            return alert('Função de exportação não encontrada.');
+        }
+        const fileContent = JSON.stringify(financeManager.exportData());
+        const boundary = '-------314159265358979323846';
+        const delimiter = '\r\n--' + boundary + '\r\n';
+        const closeDelim = '\r\n--' + boundary + '--';
+
+        const metadata = {
+            name: 'budget_' + new Date().toISOString().split('T')[0] + '.json',
+            mimeType: 'application/json'
+        };
+        const multipartRequestBody =
+            delimiter + 'Content-Type: application/json\r\n\r\n' +
+            JSON.stringify(metadata) +
+            delimiter + 'Content-Type: application/json\r\n\r\n' +
+            fileContent +
+            closeDelim;
+
+        const params = {uploadType: 'multipart'};
+        const path   = this.openedFileId ? '/upload/drive/v3/files/' + this.openedFileId : '/upload/drive/v3/files';
+        const method = this.openedFileId ? 'PATCH' : 'POST';
+
+        const request = gapi.client.request({
+            path: path,
+            method: method,
+            params: params,
+            headers: {'Content-Type': 'multipart/related; boundary=' + boundary},
+            body: multipartRequestBody
+        });
+
+        request.execute(file => {
+            if (file && file.id) {
+                this.openedFileId = file.id;
+                alert('Arquivo salvo no Drive: ' + file.name);
+            } else {
+                alert('Falha ao salvar no Drive.');
+            }
+        });
+    }
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+    if (window.gapi) {
+        driveManager.init();
+    } else {
+        console.error('gapi não carregado.');
+    }
+});
+</script>
+<!-- ===== end Google Drive integration ===== -->
+
 </body>
 </html>
