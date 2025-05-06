@@ -3114,7 +3114,21 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <!-- Google Identity & Picker -->
-<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+<script src="
+<script>
+// Early stub to avoid 'gisLoaded is not defined' race condition when GIS script's onload fires
+function gisLoaded () {
+    // If the real initializer is defined later, delegate to it
+    if (typeof window.gisLoadedReal === 'function') {
+        window.gisLoadedReal();
+    } else {
+        // Will be re‑defined later; nothing to do for now
+        console.debug('GIS script loaded (stub), awaiting full init.');
+    }
+}
+</script>
+
+https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
 <script src="https://apis.google.com/js/api.js?onload=gapiLoaded"></script>
 
 <script>
@@ -3150,7 +3164,7 @@ async function initializeGapiClient() {
 }
 
 // Called by GIS onload
-function gisLoaded() {
+function gisLoadedReal() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
