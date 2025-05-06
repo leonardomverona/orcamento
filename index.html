@@ -3203,10 +3203,23 @@ function maybeEnableButtons() {
 
 // ----- UI BUTTONS in ACTIONS MENU -----
 function createDriveButtons() {
-    const actions = document.getElementById('filters-actions') || document.body;
+    const containerIds = ['actionsDropdownContent', 'filters-actions', 'actions'];
+    let actions = null;
+    for (const id of containerIds) {
+        const el = document.getElementById(id);
+        if (el) { actions = el; break; }
+    }
+    if (!actions) {
+        console.warn('Container de ações não encontrado para botões Google Drive.');
+        return;
+    }
+
+    // Evita duplicação se já existirem
+    if (document.getElementById('btn-open-drive')) return;
+
     const openBtn = document.createElement('button');
     openBtn.id = 'btn-open-drive';
-    openBtn.textContent = '📂 Abrir do Drive';
+    openBtn.innerHTML = '<i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir do Drive';
     openBtn.disabled = true;
     openBtn.className = 'btn-add';
     openBtn.onclick = openFromDrive;
@@ -3214,12 +3227,13 @@ function createDriveButtons() {
 
     const saveBtn = document.createElement('button');
     saveBtn.id = 'btn-save-drive';
-    saveBtn.textContent = '💾 Salvar no Drive';
+    saveBtn.innerHTML = '<i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar no Drive';
     saveBtn.disabled = true;
     saveBtn.className = 'btn-add';
     saveBtn.onclick = saveToDrive;
     actions.appendChild(saveBtn);
 }
+
 
 document.addEventListener('DOMContentLoaded', createDriveButtons);
 
