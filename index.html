@@ -2,10 +2,6 @@
 
 <html data-theme="light" lang="pt-BR">
 <head>
-<meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
-
-<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext x='0' y='14' font-size='14'%3E💰%3C/text%3E%3C/svg%3E">
 <!-- Atenção: NÃO insira a client_secret em código front‑end. Ela foi omitida por segurança. Para fluxos client‑side, apenas CLIENT_ID, API_KEY e APP_ID são necessários. -->
 
 <meta charset="utf-8"/>
@@ -834,20 +830,7 @@
 header i, nav i, .header i, .navbar i {
     color: var(--accent-color) !important;
 }
-</style><script>
-// Detect if gapi failed to get storage access (Edge Tracking Prevention)
-window.addEventListener('DOMContentLoaded', () => {
-    const timeout = setTimeout(() => {
-        if (typeof gapi === 'undefined' || !window.pickerApiLoaded) {
-            console.warn('⚠️ O navegador bloqueou cookies / storage para Google APIs. '
-              + 'Se a integração Drive não funcionar, desative o Tracking Prevention (Edge) '
-              + 'ou adicione este domínio à lista de exceções.');
-        }
-    }, 4000);
-});
-</script>
-
-</head>
+</style></head>
 <body>
 <header class="app-header">
 <div class="header-content">
