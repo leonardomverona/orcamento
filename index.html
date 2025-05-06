@@ -2,6 +2,37 @@
 
 <html data-theme="light" lang="pt-BR">
 <head>
+
+<script>
+// Suppress specific console warnings/errors
+(function(){
+  const origWarn = console.warn;
+  console.warn = function(msg, ...args){
+    if (typeof msg === 'string' && msg.includes('Cross-Origin-Opener-Policy policy would block the window.closed call')) return;
+    origWarn.call(console, msg, ...args);
+  };
+  const origError = console.error;
+  console.error = function(msg, ...args){
+    if (typeof msg === 'string' && msg.includes('Unchecked runtime.lastError')) return;
+    origError.call(console, msg, ...args);
+  };
+  // Suppress extension runtime.lastError by stubbing sendMessage
+  try {
+    if (window.chrome && chrome.runtime) {
+      chrome.runtime.sendMessage = function(){};
+    }
+  } catch(e) {}
+  // Global error handler to prevent error logging for specific messages
+  window.addEventListener('error', function(event){
+    if (event.message && event.message.includes('Cross-Origin-Opener-Policy policy would block the window.closed call')) {
+      event.preventDefault();
+    }
+  });
+})();
+</script>
+
+<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ctext x='0' y='14' font-size='14'%3E💰%3C/text%3E%3C/svg%3E">
 <!-- Atenção: NÃO insira a client_secret em código front‑end. Ela foi omitida por segurança. Para fluxos client‑side, apenas CLIENT_ID, API_KEY e APP_ID são necessários. -->
 
 <meta charset="utf-8"/>
@@ -830,7 +861,8 @@
 header i, nav i, .header i, .navbar i {
     color: var(--accent-color) !important;
 }
-</style></head>
+</style>
+</head>
 <body>
 <header class="app-header">
 <div class="header-content">
