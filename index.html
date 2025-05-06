@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-
 <html data-theme="light" lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Gestão Financeira 360° - Novo Design</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
-<script>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Gestão Financeira 360° - Google Drive Integration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+
+    <script>
         // UUID Generator Function
         function uuidv4() {
           return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -16,41 +18,41 @@
           });
         }
     </script>
-<style>
-    /* Budget Dashboard Styles */
-    .budget-dashboard{
-        display:flex;
-        gap:var(--spacing,1rem);
-        margin-bottom:var(--spacing,1rem);
-    }
-    .budget-dashboard .stat-item{
-        flex:1;
-        background: var(--surface);
-        border-radius:var(--radius-lg,0.75rem);
-        box-shadow:var(--shadow-sm,0 1px 2px rgba(0,0,0,0.1));
-        padding:var(--spacing,1rem);
-        text-align:center;
-        transition:transform .2s ease, box-shadow .2s ease;
-    }
-    .budget-dashboard .stat-item:hover{
-        transform:translateY(-4px);
-        box-shadow:var(--shadow-md,0 4px 8px rgba(0,0,0,0.15));
-    }
-    .budget-dashboard .stat-item h3{
-        margin-bottom:.5rem;
-        font-size:1rem;
-        color:var(--text-secondary,#666);
-    }
-    .budget-dashboard .stat-item p{
-        font-size:1.5rem;
-        font-weight:700;
-        margin:0;
-        color: var(--text);
-    }
-    @media(max-width:768px){
-        .budget-dashboard{flex-direction:column;}
-    }
-    
+    <style>
+        /* Budget Dashboard Styles */
+        .budget-dashboard{
+            display:flex;
+            gap:var(--spacing,1rem);
+            margin-bottom:var(--spacing,1rem);
+        }
+        .budget-dashboard .stat-item{
+            flex:1;
+            background: var(--surface);
+            border-radius:var(--radius-lg,0.75rem);
+            box-shadow:var(--shadow-sm,0 1px 2px rgba(0,0,0,0.1));
+            padding:var(--spacing,1rem);
+            text-align:center;
+            transition:transform .2s ease, box-shadow .2s ease;
+        }
+        .budget-dashboard .stat-item:hover{
+            transform:translateY(-4px);
+            box-shadow:var(--shadow-md,0 4px 8px rgba(0,0,0,0.15));
+        }
+        .budget-dashboard .stat-item h3{
+            margin-bottom:.5rem;
+            font-size:1rem;
+            color:var(--text-secondary,#666);
+        }
+        .budget-dashboard .stat-item p{
+            font-size:1.5rem;
+            font-weight:700;
+            margin:0;
+            color: var(--text);
+        }
+        @media(max-width:768px){
+            .budget-dashboard{flex-direction:column;}
+        }
+
         /* Styles adapted from index (27).html and merged/adjusted for Finança6 functionality */
         :root {
             --primary: #6366f1; /* Indigo */
@@ -190,7 +192,7 @@
             display: none;
             position: absolute;
             background-color: var(--surface);
-            min-width: 180px; /* Adjust as needed */
+            min-width: 200px; /* Adjust as needed */
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             z-index: 1;
             border-radius: var(--button-radius);
@@ -227,13 +229,18 @@
             display: none;
          }
 
-        /* Header Utilities (Theme Toggle) */
+        /* Header Utilities (Theme Toggle, Sign-in) */
         .header-utilities {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             margin-left: auto; /* Push to the right */
         }
+        /* Google Sign-in Button Container */
+         #g_id_onload, .g_id_signin {
+              line-height: 0; /* Fix button vertical alignment */
+              /* Optional: Add specific margin/padding if needed for alignment */
+         }
 
         .theme-toggle {
             background: var(--surface);
@@ -455,8 +462,10 @@
              transition: background 0.2s ease;
         }
         .editable-table td[contenteditable="true"]:focus {
-            outline: 1px solid var(--primary);
+            border-color: var(--primary);
+            outline: 1px solid var(--primary); /* Subtle glow using primary color */
             background: white; /* Clearer background on focus */
+             outline-offset: 1px; /* Add a small offset */
         }
          [data-theme="dark"] .editable-table td[contenteditable="true"] {
              background: var(--surface);
@@ -823,226 +832,242 @@
         }
 
     </style>
-<style>
-/* Color header icons */
-header i, nav i, .header i, .navbar i {
-    color: var(--accent-color) !important;
-}
-</style>
-<!-- Google API and OAuth -->
-<script src="https://apis.google.com/js/api.js?onload=gapiLoaded"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-
+    <style>
+        /* Color header icons */
+        header i, nav i, .header i, .navbar i {
+            color: var(--accent-color) !important;
+        }
+    </style>
 </head>
 <body>
-<header class="app-header">
-<div class="header-content">
-<div class="app-title">
-<i class="fas fa-coins" style="color: var(--accent-color);"></i> Finanças 360°
+    <header class="app-header">
+        <div class="header-content">
+            <div class="app-title">
+                <i class="fas fa-coins" style="color: var(--accent-color);"></i> Finanças 360°
             </div>
-<nav class="nav-tabs">
-<button class="nav-btn active" data-tab="dashboard"><i class="fas fa-chart-pie" style="color: var(--accent-color);"></i> Dashboard</button>
-<button class="nav-btn" data-tab="budget"><i class="fas fa-tasks" style="color: var(--accent-color);"></i> Orçamento</button> <button class="nav-btn" data-tab="transactions"><i class="fas fa-exchange-alt" style="color: var(--accent-color);"></i> Transações</button>
-<button class="nav-btn" data-tab="categories"><i class="fas fa-tags" style="color: var(--accent-color);"></i> Categorias</button>
-<div class="actions-dropdown">
-<button class="nav-btn" id="actionsButton"><i class="fas fa-ellipsis-h" style="color: var(--accent-color);"></i> Ações</button>
-<div class="dropdown-content" id="actionsDropdownContent">
-<button id="clearDataBtn"><i class="fas fa-trash" style="color: var(--accent-color);"></i> Apagar Dados</button>
-<button id="saveFile"><i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar Dados</button>
-<button id="saveHtmlBtn"><i class="fas fa-download" style="color: var(--accent-color);"></i> Salvar HTML</button>
-<label class="nav-btn-dropdown-item" for="openFile"><i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir Dados</label>
-<input accept=".json" class="hidden-input" id="openFile" type="file"/>
-<button id="openDriveBtn"><i class="fas fa-cloud-download-alt" style="color: var(--accent-color);"></i> Abrir do Drive</button>
-<button id="saveDriveBtn"><i class="fas fa-cloud-upload-alt" style="color: var(--accent-color);"></i> Salvar no Drive</button>
-<button id="exportPDF"><i class="fas fa-file-pdf" style="color: var(--accent-color);"></i> Exportar PDF</button>
-<button id="exportExcel"><i class="fas fa-file-excel" style="color: var(--accent-color);"></i> Exportar Excel</button>
-</div>
-</div>
-</nav>
-<div class="header-utilities">
-<button class="theme-toggle" id="googleAuthBtn"><i class="fab fa-google"></i> <span id="googleAuthText">Conectar Google</span></button>
-<button class="theme-toggle" id="themeToggle">
-<i class="fas fa-moon" style="color: var(--accent-color);"></i>
-<span id="themeToggleText">Modo Escuro</span>
-</button>
-</div>
-</div>
-</header>
-<main class="container">
-<section class="tab-content active" id="dashboard">
-<div class="card">
-<h2>Resumo Mensal</h2>
-<div class="form-grid">
-<div class="input-group">
-<label for="dashboardMonth">Mês de Referência</label>
-<input id="dashboardMonth" type="month"/>
-</div>
-<div class="input-group">
-<label for="previousMonthBalance">Saldo Mês Anterior (R$)</label>
-<input id="previousMonthBalance" step="0.01" type="number" value="0.00"/>
-</div>
-<button class="btn btn-primary" id="loadDashboardMonth" type="button"><i class="fas fa-sync-alt"></i> Atualizar Mês</button>
-</div>
-<div class="stats-grid">
-<div class="stat-item"><i class="fas fa-arrow-down" style="color: var(--success)"></i><h3>Receitas</h3><p>R$ <span id="totalRealizedIncome">0.00</span></p></div>
-<div class="stat-item"><i class="fas fa-clipboard-list" style="color: var(--secondary)"></i><h3>Despesas Orçadas</h3><p>R$ <span id="totalBudgetExpenses">0.00</span></p></div>
-<div class="stat-item"><i class="fas fa-arrow-up" style="color: var(--danger)"></i><h3>Despesas Realizadas</h3><p>R$ <span id="totalRealizedExpenses">0.00</span></p></div>
-<div class="stat-item"><i class="fas fa-tasks" style="color: var(--warning)"></i><h3>Saldo do Orçamento</h3><p>R$ <span id="budgetBalance">0.00</span></p></div>
-<div class="stat-item" style="grid-column: span 2;"><i class="fas fa-piggy-bank" style="color: var(--primary)"></i><h3>Saldo (Disponível)</h3><p class="positive">R$ <span id="cumulativeBalance">0.00</span></p></div>
-</div>
-</div>
-<div class="card">
-<h2>Distribuição de Despesas por Categoria</h2>
-<div class="comparativo-container">
-<div class="chart-wrapper">
-<h3>Orçado</h3>
-<canvas id="budgetDistributionChart"></canvas>
-</div>
-<div class="chart-wrapper">
-<h3>Realizado</h3>
-<canvas id="realizedDistributionChart"></canvas>
-</div>
-</div>
-</div>
-</section>
-<section class="tab-content" id="budget">
-<div class="budget-dashboard">
-<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-line" style="color: #28a745;"></i> Receitas Orçadas</h3><p>R$ <span id="budgetTotalIncome">0,00</span></p></div>
-<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-pie" style="color: #dc3545;"></i> Despesas Orçadas</h3><p>R$ <span id="budgetTotalExpenses">0,00</span></p></div>
-<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-balance-scale" style="color: #007bff;"></i> Saldo Orçado</h3><p>R$ <span id="budgetPlannedBalance">0,00</span></p></div>
-</div>
-<div class="card">
-<h2>Orçamento Mensal Detalhado</h2>
-<div class="form-inline" style="margin-bottom: var(--spacing);">
-<div class="input-group">
-<label for="budgetMonth">Mês do Orçamento</label>
-<input id="budgetMonth" required="" type="month"/>
-</div>
-<button class="btn btn-primary" id="loadBudget" type="button"><i class="fas fa-search"></i> Carregar Mês</button>
-</div>
-<div id="budgetDetailsContainer" style="display:none;">
-<div class="budget-section">
-<h3><i class="fas fa-hand-holding-usd"></i> Receitas Orçadas</h3>
-<div class="input-group" style="margin-bottom: var(--spacing);">
-<label for="budgetedGeneralIncome">Receita Geral Prevista (Ex: Salário)</label>
-<input id="budgetedGeneralIncome" min="0" step="0.01" type="number" value="0.00"/>
-</div>
-<h4><i class="fas fa-chart-line" style="color: #28a745;"></i> Outras Receitas / Investimentos</h4>
-<ul class="budget-item-list" data-type="income" id="incomeBudgetList">
-</ul>
-<form class="add-budget-item-form" data-type="income" id="addIncomeItemForm">
-<div class="input-group">
-<label for="newIncomeItemDescription">Descrição da Receita</label>
-<input id="newIncomeItemDescription" placeholder="Ex: Renda Fixa, Dividendos" required="" type="text"/>
-</div>
-<div class="input-group">
-<label for="newIncomeItemAmount">Valor Previsto (R$)</label>
-<input id="newIncomeItemAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
-</div>
-<button class="btn btn-success btn-small" type="submit"><i class="fas fa-plus"></i> Adicionar Receita</button>
-</form>
-</div>
-<div class="budget-section">
-<h3><i class="fas fa-receipt"></i> Despesas Orçadas</h3>
-<div id="expenseBudgetDetails">
-</div>
-</div>
-<div style="text-align: right; margin-top: var(--spacing);">
-<button class="btn btn-primary" id="saveBudget"><i class="fas fa-save"></i> Salvar Orçamento do Mês</button>
-</div>
-</div>
-</div>
-</section>
-<section class="tab-content" id="transactions">
-<div class="card">
-<h2><i class="fas fa-plus-circle" style="color: var(--success)"></i> Adicionar Receita</h2>
-<form class="form-grid" id="revenueForm">
-<div class="input-group">
-<label for="revenueDate">Data</label>
-<input id="revenueDate" required="" type="date"/>
-</div>
-<div class="input-group">
-<label for="revenueDescription">Descrição</label>
-<input id="revenueDescription" placeholder="Ex: Salário, Venda..." required="" type="text"/>
-</div>
-<div class="input-group">
-<label for="revenueSource">Origem (Opcional)</label>
-<input id="revenueSource" placeholder="Ex: Empresa X, Cliente Y" type="text"/>
-</div>
-<div class="input-group">
-<label for="revenueAmount">Valor (R$)</label>
-<input id="revenueAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
-</div>
-<button class="btn btn-success" type="submit"><i class="fas fa-plus"></i> Adicionar Receita</button>
-</form>
-</div>
-<div class="card">
-<h2><i class="fas fa-minus-circle" style="color: var(--danger)"></i> Adicionar Despesa</h2>
-<form class="form-grid" id="expenseForm">
-<div class="input-group">
-<label for="expenseDate">Data</label>
-<input id="expenseDate" required="" type="date"/>
-</div>
-<div class="input-group">
-<label for="expenseDescription">Descrição</label>
-<input id="expenseDescription" placeholder="Ex: Aluguel, Supermercado..." required="" type="text"/>
-</div>
-<div class="input-group">
-<label for="expenseCategorySelect">Categoria</label>
-<select id="expenseCategorySelect" required=""></select>
-</div>
-<div class="input-group">
-<label for="expenseAmount">Valor (R$)</label>
-<input id="expenseAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
-</div>
-<button class="btn btn-danger" type="submit"><i class="fas fa-plus"></i> Adicionar Despesa</button>
-</form>
-</div>
-<div class="card">
-<h2>Histórico de Transações</h2>
-<div style="margin-bottom: var(--spacing); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
-<div class="input-group" style="max-width: 250px; margin-bottom: 0;">
-<label for="transactionFilterMonth">Filtrar por Mês</label>
-<input id="transactionFilterMonth" type="month"/>
-</div>
-<button class="btn btn-danger" id="clearAll"><i class="fas fa-trash-alt"></i> Limpar Todas Transações</button>
-</div>
-<div class="editable-table-container">
-<table class="editable-table" id="transactionsTable">
-<thead>
-<tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria/Origem</th><th>Valor</th><th>Ações</th></tr>
-</thead>
-<tbody>
-<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">Nenhuma transação encontrada.</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-</section>
-<section class="tab-content" id="categories">
-<div class="card">
-<h2>Gerenciar Categorias de Despesa</h2>
-<p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing);">Adicione ou remova categorias usadas para classificar suas despesas. As receitas não são categorizadas aqui.</p>
-<form class="form-inline" id="addCategoryForm">
-<div class="input-group">
-<label for="newCategory">Nova Categoria</label>
-<input id="newCategory" placeholder="Ex: Assinaturas, Impostos" type="text"/>
-</div>
-<button class="btn btn-primary" id="addCategory" type="submit"><i class="fas fa-plus"></i> Adicionar Categoria</button>
-</form>
-<div class="category-manager">
-<p style="color: var(--text-secondary);">Nenhuma categoria de despesa criada.</p>
-</div>
-</div>
-</section>
-</main>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script>
+            <nav class="nav-tabs">
+                <button class="nav-btn active" data-tab="dashboard"><i class="fas fa-chart-pie" style="color: var(--accent-color);"></i> Dashboard</button>
+                <button class="nav-btn" data-tab="budget"><i class="fas fa-tasks" style="color: var(--accent-color);"></i> Orçamento</button>
+                <button class="nav-btn" data-tab="transactions"><i class="fas fa-exchange-alt" style="color: var(--accent-color);"></i> Transações</button>
+                <button class="nav-btn" data-tab="categories"><i class="fas fa-tags" style="color: var(--accent-color);"></i> Categorias</button>
+                <div class="actions-dropdown">
+                    <button class="nav-btn" id="actionsButton"><i class="fas fa-ellipsis-h" style="color: var(--accent-color);"></i> Ações</button>
+                    <div class="dropdown-content" id="actionsDropdownContent">
+                        <button id="authorize_button"><i class="fab fa-google-drive" style="color: var(--accent-color);"></i> Conectar Google Drive</button>
+                        <button id="signOut_button" style="display: none;"><i class="fas fa-sign-out-alt" style="color: var(--accent-color);"></i> Desconectar Google Drive</button>
+                        <button id="saveToDriveBtn" style="display: none;"><i class="fas fa-cloud-upload-alt" style="color: var(--accent-color);"></i> Salvar no Drive</button>
+                        <button id="openFromDriveBtn" style="display: none;"><i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir do Drive</button>
+                        <hr style="margin: 0.5rem 0; border-color: var(--border);">
+                        <button id="saveFile"><i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar Dados (Local)</button>
+                        <label class="nav-btn-dropdown-item" for="openFile"><i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir Dados (Local)</label>
+                        <input accept=".json" class="hidden-input" id="openFile" type="file"/>
+                        <hr style="margin: 0.5rem 0; border-color: var(--border);">
+                         <button id="clearDataBtn"><i class="fas fa-trash" style="color: var(--accent-color);"></i> Apagar Todos os Dados</button>
+                         <hr style="margin: 0.5rem 0; border-color: var(--border);">
+                        <button id="saveHtmlBtn"><i class="fas fa-download" style="color: var(--accent-color);"></i> Salvar HTML</button>
+                        <button id="exportPDF"><i class="fas fa-file-pdf" style="color: var(--accent-color);"></i> Exportar PDF</button>
+                        <button id="exportExcel"><i class="fas fa-file-excel" style="color: var(--accent-color);"></i> Exportar Excel</button>
+                    </div>
+                </div>
+            </nav>
+            <div class="header-utilities">
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                 </div>
+                 <div class="g_id_signin"
+                     data-type="standard"
+                     data-size="large"
+                     data-theme="outline"
+                     data-text="sign_in_with"
+                     data-shape="rectangular"
+                     data-logo_alignment="left">
+                 </div>
+
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon" style="color: var(--accent-color);"></i>
+                    <span id="themeToggleText">Modo Escuro</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <section class="tab-content active" id="dashboard">
+            <div class="card">
+                <h2>Resumo Mensal</h2>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="dashboardMonth">Mês de Referência</label>
+                        <input id="dashboardMonth" type="month"/>
+                    </div>
+                    <div class="input-group">
+                        <label for="previousMonthBalance">Saldo Mês Anterior (R$)</label>
+                        <input id="previousMonthBalance" step="0.01" type="number" value="0.00"/>
+                    </div>
+                    <button class="btn btn-primary" id="loadDashboardMonth" type="button"><i class="fas fa-sync-alt"></i> Atualizar Mês</button>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item"><i class="fas fa-arrow-down" style="color: var(--success)"></i><h3>Receitas</h3><p>R$ <span id="totalRealizedIncome">0.00</span></p></div>
+                    <div class="stat-item"><i class="fas fa-clipboard-list" style="color: var(--secondary)"></i><h3>Despesas Orçadas</h3><p>R$ <span id="totalBudgetExpenses">0.00</span></p></div>
+                    <div class="stat-item"><i class="fas fa-arrow-up" style="color: var(--danger)"></i><h3>Despesas Realizadas</h3><p>R$ <span id="totalRealizedExpenses">0.00</span></p></div>
+                    <div class="stat-item"><i class="fas fa-tasks" style="color: var(--warning)"></i><h3>Saldo do Orçamento</h3><p>R$ <span id="budgetBalance">0.00</span></p></div>
+                    <div class="stat-item" style="grid-column: span 2;"><i class="fas fa-piggy-bank" style="color: var(--primary)"></i><h3>Saldo (Disponível)</h3><p class="positive">R$ <span id="cumulativeBalance">0.00</span></p></div>
+                </div>
+            </div>
+            <div class="card">
+                <h2>Distribuição de Despesas por Categoria</h2>
+                <div class="comparativo-container">
+                    <div class="chart-wrapper">
+                        <h3>Orçado</h3>
+                        <canvas id="budgetDistributionChart"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <h3>Realizado</h3>
+                        <canvas id="realizedDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="tab-content" id="budget">
+            <div class="budget-dashboard">
+                <div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-line" style="color: #28a745;"></i> Receitas Orçadas</h3><p>R$ <span id="budgetTotalIncome">0,00</span></p></div>
+                <div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-pie" style="color: #dc3545;"></i> Despesas Orçadas</h3><p>R$ <span id="budgetTotalExpenses">0,00</span></p></div>
+                <div class="stat-item"><h3><i aria-hidden="true" class="fas fa-balance-scale" style="color: #007bff;"></i> Saldo Orçado</h3><p>R$ <span id="budgetPlannedBalance">0,00</span></p></div>
+            </div>
+            <div class="card">
+                <h2>Orçamento Mensal Detalhado</h2>
+                <div class="form-inline" style="margin-bottom: var(--spacing);">
+                    <div class="input-group">
+                        <label for="budgetMonth">Mês do Orçamento</label>
+                        <input id="budgetMonth" required="" type="month"/>
+                    </div>
+                    <button class="btn btn-primary" id="loadBudget" type="button"><i class="fas fa-search"></i> Carregar Mês</button>
+                </div>
+                <div id="budgetDetailsContainer" style="display:none;">
+                    <div class="budget-section">
+                        <h3><i class="fas fa-hand-holding-usd"></i> Receitas Orçadas</h3>
+                        <div class="input-group" style="margin-bottom: var(--spacing);">
+                            <label for="budgetedGeneralIncome">Receita Geral Prevista (Ex: Salário)</label>
+                            <input id="budgetedGeneralIncome" min="0" step="0.01" type="number" value="0.00"/>
+                        </div>
+                        <h4><i class="fas fa-chart-line" style="color: #28a745;"></i> Outras Receitas / Investimentos</h4>
+                        <ul class="budget-item-list" data-type="income" id="incomeBudgetList">
+                        </ul>
+                        <form class="add-budget-item-form" data-type="income" id="addIncomeItemForm">
+                            <div class="input-group">
+                                <label for="newIncomeItemDescription">Descrição da Receita</label>
+                                <input id="newIncomeItemDescription" placeholder="Ex: Renda Fixa, Dividendos" required="" type="text"/>
+                            </div>
+                            <div class="input-group">
+                                <label for="newIncomeItemAmount">Valor Previsto (R$)</label>
+                                <input id="newIncomeItemAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
+                            </div>
+                            <button class="btn btn-success btn-small" type="submit"><i class="fas fa-plus"></i> Adicionar Receita</button>
+                        </form>
+                    </div>
+                    <div class="budget-section">
+                        <h3><i class="fas fa-receipt"></i> Despesas Orçadas</h3>
+                        <div id="expenseBudgetDetails">
+                        </div>
+                    </div>
+                    <div style="text-align: right; margin-top: var(--spacing);">
+                        <button class="btn btn-primary" id="saveBudget"><i class="fas fa-save"></i> Salvar Orçamento do Mês</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="tab-content" id="transactions">
+            <div class="card">
+                <h2><i class="fas fa-plus-circle" style="color: var(--success)"></i> Adicionar Receita</h2>
+                <form class="form-grid" id="revenueForm">
+                    <div class="input-group">
+                        <label for="revenueDate">Data</label>
+                        <input id="revenueDate" required="" type="date"/>
+                    </div>
+                    <div class="input-group">
+                        <label for="revenueDescription">Descrição</label>
+                        <input id="revenueDescription" placeholder="Ex: Salário, Venda..." required="" type="text"/>
+                    </div>
+                    <div class="input-group">
+                        <label for="revenueSource">Origem (Opcional)</label>
+                        <input id="revenueSource" placeholder="Ex: Empresa X, Cliente Y" type="text"/>
+                    </div>
+                    <div class="input-group">
+                        <label for="revenueAmount">Valor (R$)</label>
+                        <input id="revenueAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
+                    </div>
+                    <button class="btn btn-success" type="submit"><i class="fas fa-plus"></i> Adicionar Receita</button>
+                </form>
+            </div>
+            <div class="card">
+                <h2><i class="fas fa-minus-circle" style="color: var(--danger)"></i> Adicionar Despesa</h2>
+                <form class="form-grid" id="expenseForm">
+                    <div class="input-group">
+                        <label for="expenseDate">Data</label>
+                        <input id="expenseDate" required="" type="date"/>
+                    </div>
+                    <div class="input-group">
+                        <label for="expenseDescription">Descrição</label>
+                        <input id="expenseDescription" placeholder="Ex: Aluguel, Supermercado..." required="" type="text"/>
+                    </div>
+                    <div class="input-group">
+                        <label for="expenseCategorySelect">Categoria</label>
+                        <select id="expenseCategorySelect" required=""></select>
+                    </div>
+                    <div class="input-group">
+                        <label for="expenseAmount">Valor (R$)</label>
+                        <input id="expenseAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
+                    </div>
+                    <button class="btn btn-danger" type="submit"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                </form>
+            </div>
+            <div class="card">
+                <h2>Histórico de Transações</h2>
+                <div style="margin-bottom: var(--spacing); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                    <div class="input-group" style="max-width: 250px; margin-bottom: 0;">
+                        <label for="transactionFilterMonth">Filtrar por Mês</label>
+                        <input id="transactionFilterMonth" type="month"/>
+                    </div>
+                    <button class="btn btn-danger" id="clearAll"><i class="fas fa-trash-alt"></i> Limpar Todas Transações</button>
+                </div>
+                <div class="editable-table-container">
+                    <table class="editable-table" id="transactionsTable">
+                        <thead>
+                        <tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria/Origem</th><th>Valor</th><th>Ações</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">Nenhuma transação encontrada.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        <section class="tab-content" id="categories">
+            <div class="card">
+                <h2>Gerenciar Categorias de Despesa</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing);">Adicione ou remova categorias usadas para classificar suas despesas. As receitas não são categorizadas aqui.</p>
+                <form class="form-inline" id="addCategoryForm">
+                    <div class="input-group">
+                        <label for="newCategory">Nova Categoria</label>
+                        <input id="newCategory" placeholder="Ex: Assinaturas, Impostos" type="text"/>
+                    </div>
+                    <button class="btn btn-primary" id="addCategory" type="submit"><i class="fas fa-plus"></i> Adicionar Categoria</button>
+                </form>
+                <div class="category-manager">
+                    <p style="color: var(--text-secondary);">Nenhuma categoria de despesa criada.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
         'use strict';
 
         class FinanceManager {
@@ -1060,14 +1085,25 @@ header i, nav i, .header i, .navbar i {
                 this.realizedChartInstance = null;
                 this.chartColors = ['#6366f1', '#8b5cf6', '#a855f7', '#ec4899', '#ef4444', '#f59e0b', '#10b981', '#22c55e', '#06b6d4', '#3b82f6'];
                 this.chartColorsDark = ['#818cf8', '#a78bfa', '#c084fc', '#f472b6', '#f87171', '#fbbf24', '#34d399', '#4ade80', '#22d3ee', '#60a5fa'];
+
+                // Google API properties
+                this.googleSignInInitialized = false;
+                this.gapiLoaded = false;
+                this.pickerInited = false;
+                this.tokenClient = null;
+                this.accessToken = null;
+                this.lastDriveFileId = localStorage.getItem('lastDriveFileId') || null; // Store last used file ID
+                this.appDataFileName = 'financas360_data.json'; // Default file name for Drive
+
                 this.init();
             }
 
             init() {
-                this.loadState(); // Load data from localStorage
+                this.loadState(); // Load data from localStorage initially
                 this.setupTabs();
                 this.setupTheme();
                 this.setupEventListeners();
+                this.initGoogleApis(); // Initialize Google APIs
 
                 // Set initial month for dashboard and transactions filter
                 const today = new Date();
@@ -1081,13 +1117,379 @@ header i, nav i, .header i, .navbar i {
                  // Ensure initial month data structure exists
                  this.ensureMonthData(initialMonth);
 
-
                 // Initial Renderings
                 this.updateDashboard();
                 this.renderTransactions();
                  this.renderExpenseCategories(); // Render categories on init
                  this.preFillForms(); // Pre-fill dates etc.
             }
+
+            // --- Google API Setup and Handling ---
+
+             initGoogleApis() {
+                 // Load the Google API client library
+                 gapi.load('client:auth2', this.onGapiLoad.bind(this));
+             }
+
+             onGapiLoad() {
+                 this.gapiLoaded = true;
+                 console.log('Google API client loaded.');
+                 this.checkGoogleApiLoadStatus();
+             }
+
+             // Called after Google Identity Services script loads
+             handleCredentialResponse(response) {
+                 console.log("Credential response received:", response);
+                 if (response && response.credential) {
+                      // Decode the credential (ID token) for basic profile info if needed
+                      // const data = jwt_decode(response.credential);
+                      // console.log("ID Token Data:", data);
+
+                      // Request access token for API calls
+                      this.tokenClient.callback = async (resp) => {
+                           if (resp.error) {
+                                throw (resp.error);
+                           }
+                           this.accessToken = resp.access_token;
+                           console.log('Access token obtained:', this.accessToken);
+
+                           // Initialize the Google Picker API
+                           gapi.load('picker', this.onPickerApiLoad.bind(this));
+
+                            // Initialize the Drive API client
+                           await gapi.client.load('https://www.googleapis.com/discovery/v1/apis/drive/v3/rest');
+                           console.log('Google Drive API client loaded.');
+
+                           this.updateGoogleDriveButtons(true); // Show Drive buttons
+                            this.loadLastDriveFile(); // Attempt to load last file from Drive
+                      };
+
+                      this.tokenClient.requestAccessToken();
+
+                 } else {
+                      console.error('Credential response error:', response);
+                      alert('Falha na autenticação do Google. Verifique o console para detalhes.');
+                      this.updateGoogleDriveButtons(false); // Hide Drive buttons
+                      this.accessToken = null;
+                      this.pickerInited = false;
+                 }
+             }
+
+             onPickerApiLoad() {
+                 this.pickerInited = true;
+                 console.log('Google Picker API loaded.');
+                 this.checkGoogleApiLoadStatus();
+             }
+
+             checkGoogleApiLoadStatus() {
+                 // Check if both gapi and picker APIs are loaded before enabling related features
+                 if (this.gapiLoaded && this.pickerInited) {
+                     console.log('Google APIs (client, picker) are ready.');
+                     // You can now safely use gapi.client and google.picker
+                 }
+             }
+
+            updateGoogleDriveButtons(signedIn) {
+                 const authButton = document.getElementById('authorize_button');
+                 const signOutButton = document.getElementById('signOut_button');
+                 const saveButton = document.getElementById('saveToDriveBtn');
+                 const openButton = document.getElementById('openFromDriveBtn');
+                  const googleSignInBtn = document.querySelector('.g_id_signin'); // The GSI button container
+
+                 if (signedIn) {
+                     if (authButton) authButton.style.display = 'none';
+                     if (signOutButton) signOutButton.style.display = 'block';
+                     if (saveButton) saveButton.style.display = 'block';
+                     if (openButton) openButton.style.display = 'block';
+                      if (googleSignInBtn) googleSignInBtn.style.display = 'none'; // Hide default GSI button after auth
+                 } else {
+                     if (authButton) authButton.style.display = 'block';
+                     if (signOutButton) signOutButton.style.display = 'none';
+                     if (saveButton) saveButton.style.display = 'none';
+                     if (openButton) openButton.style.display = 'none';
+                      if (googleSignInBtn) googleSignInBtn.style.display = 'block'; // Show default GSI button
+                 }
+             }
+
+            handleAuthClick() {
+                 if (!this.gapiLoaded) {
+                     console.error('Google API client library not loaded.');
+                     alert('Aguarde o carregamento da biblioteca do Google API.');
+                     return;
+                 }
+
+                 // Initialize tokenClient if not already done
+                 if (!this.tokenClient) {
+                     this.tokenClient = google.accounts.oauth2.initTokenClient({
+                         client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com', // REPLACE with your Client ID
+                         scope: 'https://www.googleapis.com/auth/drive.file', // Scope for accessing files created/opened by this app
+                         callback: '', // Set the callback in handleCredentialResponse
+                     });
+                 }
+
+                 // The prompt for user consent is handled by tokenClient.requestAccessToken()
+                 // which is called in handleCredentialResponse after the ID token is received.
+                 // If the user is already signed in and has granted permissions, this might be quick.
+                 // Otherwise, it will trigger the Google Sign-In flow and consent screen.
+
+                 // The Sign In With Google button itself handles the initial credential response (ID token).
+                 // Our handleCredentialResponse then uses the tokenClient to get the access token.
+                 // So, simply showing the Sign In With Google button is enough to start the flow.
+                 // The 'authorize_button' is primarily for triggering the access token request if the user is already signed in to Google but not authenticated with the app.
+                 // Let's trigger the token request directly on 'authorize_button' click after ensuring tokenClient exists.
+                 this.tokenClient.requestAccessToken({ prompt: '' }); // Use prompt: '' for silent request if possible
+            }
+
+
+            handleSignOutClick() {
+                 if (this.accessToken) {
+                     google.accounts.oauth2.revoke(this.accessToken, () => {
+                         console.log('Access token revoked.');
+                         this.accessToken = null;
+                         this.updateGoogleDriveButtons(false);
+                         this.lastDriveFileId = null;
+                         localStorage.removeItem('lastDriveFileId');
+                         alert('Desconectado do Google Drive.');
+                          // Optionally reload or clear data after sign out
+                          // location.reload();
+                     });
+                 } else {
+                     alert('Nenhuma conta do Google conectada.');
+                 }
+            }
+
+
+            // --- Google Picker API ---
+             createPicker() {
+                 if (!this.accessToken || !this.pickerInited || !this.gapiLoaded) {
+                     alert('Aguarde a conexão com o Google Drive.');
+                     return;
+                 }
+
+                 const view = new google.picker.View(google.picker.ViewId.DOCS);
+                 view.setMimeTypes('application/json'); // Filter for JSON files
+                 view.setMode(google.picker.ViewMode.LIST); // Display as a list
+
+                 const picker = new google.picker.PickerBuilder()
+                     .addView(view)
+                     .setOAuthToken(this.accessToken)
+                     .setDeveloperKey('YOUR_API_KEY') // REPLACE with your API Key
+                     .setAppId('YOUR_APP_ID') // REPLACE with your App ID
+                     .setCallback(this.pickerCallback.bind(this))
+                     .build();
+
+                 picker.setVisible(true);
+             }
+
+             pickerCallback(data) {
+                 if (data[google.picker.Response.ACTION] === google.picker.Action.PICKED) {
+                     const document = data[google.picker.Response.DOCUMENTS][0];
+                     const fileId = document[google.picker.Document.ID];
+                     const fileName = document[google.picker.Document.NAME];
+                     console.log('File selected:', fileName, 'ID:', fileId);
+                     this.loadFromDrive(fileId);
+                 } else if (data[google.picker.Response.ACTION] === google.picker.Action.CANCEL) {
+                     console.log('Picker canceled.');
+                 }
+             }
+
+            // --- Google Drive API - Loading ---
+
+             async loadLastDriveFile() {
+                 if (this.accessToken && this.lastDriveFileId) {
+                     console.log('Attempting to load last used file from Drive:', this.lastDriveFileId);
+                      try {
+                         const response = await gapi.client.drive.files.get({
+                             fileId: this.lastDriveFileId,
+                             alt: 'media' // To download the file content
+                         });
+                         const loadedData = response.body;
+                         console.log('File content downloaded from Drive:', loadedData);
+                         try {
+                              const state = JSON.parse(loadedData);
+                             if (this.validateImportedState(state)) {
+                                 this.state = state;
+                                 // Sort categories after loading
+                                  if (Array.isArray(this.state.expenseCategories)) {
+                                       this.state.expenseCategories.sort();
+                                  } else {
+                                       this.state.expenseCategories = []; // Default if invalid
+                                  }
+                                 this.saveState(); // Save to local storage as well
+                                  this.postLoadActions(); // Update UI etc.
+                                 alert('Dados carregados do Google Drive com sucesso!');
+                             } else {
+                                 alert('Erro ao carregar arquivo do Drive: O formato dos dados é inválido ou está incompleto. Verifique o console.');
+                                  this.lastDriveFileId = null; // Clear invalid file ID
+                                  localStorage.removeItem('lastDriveFileId');
+                             }
+                         } catch (e) {
+                             console.error('Error parsing JSON from Drive file:', e);
+                             alert('Erro ao processar o conteúdo do arquivo do Google Drive.');
+                              this.lastDriveFileId = null; // Clear invalid file ID
+                              localStorage.removeItem('lastDriveFileId');
+                         }
+                      } catch (error) {
+                         console.error('Error downloading file from Drive:', error);
+                          // If the file doesn't exist or access is denied, clear the last used ID
+                           if (error.status === 404 || error.status === 403) {
+                                console.warn('Last used Drive file not found or access denied. Clearing lastDriveFileId.');
+                                this.lastDriveFileId = null;
+                                localStorage.removeItem('lastDriveFileId');
+                                alert('O arquivo financeiro salvo anteriormente no Google Drive não foi encontrado ou você não tem permissão para acessá-lo.');
+                           } else {
+                                alert('Erro ao baixar dados do Google Drive. Verifique sua conexão ou permissões.');
+                           }
+                      }
+                 } else {
+                     console.log('No lastDriveFileId found or not signed in.');
+                     // If not logged in or no last file, just load from local storage (already done in init)
+                     this.postLoadActions(); // Perform post-load actions for local storage data
+                 }
+             }
+
+
+             async loadFromDrive(fileId) {
+                  if (!this.accessToken) {
+                       alert('Por favor, conecte-se ao Google Drive primeiro.');
+                       return;
+                  }
+                  if (!fileId) {
+                       alert('Nenhum ID de arquivo fornecido para carregar.');
+                       return;
+                  }
+
+                  try {
+                      const response = await gapi.client.drive.files.get({
+                          fileId: fileId,
+                          alt: 'media' // To download the file content
+                      });
+                      const loadedData = response.body;
+                      console.log('File content downloaded from Drive:', loadedData);
+                       try {
+                            const state = JSON.parse(loadedData);
+                           if (this.validateImportedState(state)) {
+                               this.state = state;
+                                // Sort categories after loading
+                                if (Array.isArray(this.state.expenseCategories)) {
+                                     this.state.expenseCategories.sort();
+                                } else {
+                                     this.state.expenseCategories = []; // Default if invalid
+                                }
+                              this.lastDriveFileId = fileId; // Store this as the last used file
+                              localStorage.setItem('lastDriveFileId', fileId);
+                              this.saveState(); // Save to local storage as well
+                              this.postLoadActions(); // Update UI etc.
+                              alert('Dados carregados do Google Drive com sucesso!');
+                           } else {
+                                alert('Erro ao carregar arquivo do Drive: O formato dos dados é inválido ou está incompleto. Verifique o console.');
+                           }
+                       } catch (e) {
+                           console.error('Error parsing JSON from Drive file:', e);
+                           alert('Erro ao processar o conteúdo do arquivo do Google Drive.');
+                       }
+
+                  } catch (error) {
+                      console.error('Error downloading file from Drive:', error);
+                      alert('Erro ao baixar dados do Google Drive. Verifique sua conexão ou permissões.');
+                  }
+             }
+
+            // Actions to perform after loading state (from local storage or Drive)
+             postLoadActions() {
+                 // Reset current month selections based on today's date or initial values
+                  const today = new Date();
+                  const initialMonth = today.toISOString().slice(0, 7);
+                  this.currentDashboardMonth = document.getElementById('dashboardMonth').value || initialMonth;
+                  this.currentTransactionFilterMonth = document.getElementById('transactionFilterMonth').value || initialMonth;
+
+                  document.getElementById('dashboardMonth').value = this.currentDashboardMonth;
+                  document.getElementById('transactionFilterMonth').value = this.currentTransactionFilterMonth;
+
+
+                  this.updateDashboard();
+                  this.renderTransactions();
+                  this.renderExpenseCategories(); // Re-render categories based on loaded state
+                  this.loadBudgetInitial(); // Load budget for the default or saved month
+
+                  // Update previous month balance input based on loaded data
+                 const dashboardMonthInput = document.getElementById('dashboardMonth');
+                 if(dashboardMonthInput.value) {
+                    const prevDate = new Date(dashboardMonthInput.value + '-01');
+                    prevDate.setMonth(prevDate.getMonth() - 1);
+                    const prevMonth = prevDate.toISOString().slice(0,7);
+                     this.ensureMonthData(prevMonth); // Ensure previous month data exists to calculate its summary
+                    const sumPrev = this.calculateMonthSummary(prevMonth);
+                    document.getElementById('previousMonthBalance').value = sumPrev.cumulativeBalance.toFixed(2);
+                 } else {
+                     document.getElementById('previousMonthBalance').value = '0.00';
+                 }
+             }
+
+
+            // --- Google Drive API - Saving ---
+
+             async saveToDrive() {
+                  if (!this.accessToken) {
+                      alert('Por favor, conecte-se ao Google Drive primeiro.');
+                      return;
+                  }
+                  const data = JSON.stringify(this.state, null, 2);
+                  const blob = new Blob([data], { type: 'application/json' });
+
+                  const fileMetadata = {
+                     'name': this.appDataFileName,
+                     'mimeType': 'application/json'
+                      // Optional: specify a folder, e.g., 'parents': ['YOUR_FOLDER_ID']
+                      // If you don't specify parents, it defaults to the root folder.
+                  };
+
+                  try {
+                     let response;
+                     if (this.lastDriveFileId) {
+                         // Update existing file if we have a file ID
+                         console.log('Updating existing file in Drive:', this.lastDriveFileId);
+                         const form = new FormData();
+                         form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
+                         form.append('file', blob);
+
+                         response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${this.lastDriveFileId}?uploadType=multipart&fields=id,name`, {
+                              method: 'PATCH', // Use PATCH for updates
+                              headers: new Headers({ 'Authorization': 'Bearer ' + this.accessToken }),
+                              body: form
+                         });
+
+                     } else {
+                         // Create a new file
+                         console.log('Creating new file in Drive:', this.appDataFileName);
+                         const form = new FormData();
+                         form.append('metadata', new Blob([JSON.stringify(fileMetadata)], { type: 'application/json' }));
+                         form.append('file', blob);
+
+                         response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name', {
+                             method: 'POST',
+                             headers: new Headers({ 'Authorization': 'Bearer ' + this.accessToken }),
+                             body: form
+                         });
+                     }
+
+                     if (!response.ok) {
+                         const error = await response.json();
+                         throw new Error(`Drive API error: ${response.status} ${response.statusText} - ${error.error.message}`);
+                     }
+
+                     const result = await response.json();
+                     this.lastDriveFileId = result.id; // Store the new/updated file ID
+                     localStorage.setItem('lastDriveFileId', this.lastDriveFileId);
+                     console.log('File saved to Drive:', result.name, 'ID:', result.id);
+                     alert('Dados salvos no Google Drive com sucesso!');
+
+                  } catch (error) {
+                      console.error('Error saving file to Drive:', error);
+                      alert(`Erro ao salvar dados no Google Drive: ${error.message}`);
+                  }
+             }
+
 
             // --- Setup Functions ---
 
@@ -1143,19 +1545,33 @@ header i, nav i, .header i, .navbar i {
                            actionsDropdownContent.style.display = 'none';
                        }
                   });
-                 // Dropdown actions
+
+                 // Google Drive Actions
+                 const authorizeButton = document.getElementById('authorize_button');
+                 const signOutButton = document.getElementById('signOut_button');
+                 const saveToDriveBtn = document.getElementById('saveToDriveBtn');
+                 const openFromDriveBtn = document.getElementById('openFromDriveBtn');
+
+                 if (authorizeButton) authorizeButton.addEventListener('click', () => { this.handleAuthClick(); actionsDropdownContent.style.display = 'none'; });
+                 if (signOutButton) signOutButton.addEventListener('click', () => { this.handleSignOutClick(); actionsDropdownContent.style.display = 'none'; });
+                 if (saveToDriveBtn) saveToDriveBtn.addEventListener('click', () => { this.saveToDrive(); actionsDropdownContent.style.display = 'none'; });
+                 if (openFromDriveBtn) openFromDriveBtn.addEventListener('click', () => { this.createPicker(); actionsDropdownContent.style.display = 'none'; });
+
+
+                 // Local File Actions (Original)
                  document.getElementById('saveFile').addEventListener('click', () => { this.saveFile(); actionsDropdownContent.style.display = 'none'; });
-                 document.getElementById('saveHtmlBtn').addEventListener('click', () => { this.saveHtml(); actionsDropdownContent.style.display = 'none'; });
                  document.getElementById('openFile').addEventListener('change', (e) => { this.openFile(e); actionsDropdownContent.style.display = 'none'; });
+
+                 // Other Actions
                  document.getElementById('exportPDF').addEventListener('click', () => { this.exportToPDF(); actionsDropdownContent.style.display = 'none'; });
                  document.getElementById('exportExcel').addEventListener('click', () => { this.exportToExcel(); actionsDropdownContent.style.display = 'none'; });
                 document.getElementById('clearDataBtn').addEventListener('click', () => {
+                     actionsDropdownContent.style.display='none'; // Close dropdown first
                     if(confirm('Tem certeza que deseja apagar todos os dados inseridos? Esta ação não pode ser desfeita.')){
-                        localStorage.removeItem('financeManager_v2');
-                        location.reload();
+                         this.clearAllData(); // Use the new clearAllData method
                     }
-                    actionsDropdownContent.style.display='none';
                 });
+
 
                 // Update budget dashboard on button click and month change
                 if(document.getElementById('loadBudget')){
@@ -1170,7 +1586,6 @@ header i, nav i, .header i, .navbar i {
                         this.updateBudgetDashboard();
                     });
                 }
-    
 
 
                 // Dashboard
@@ -1371,6 +1786,8 @@ header i, nav i, .header i, .navbar i {
                  if (!this.state.expenseCategories || this.state.expenseCategories.length === 0) {
                       this.state.expenseCategories = defaultState.expenseCategories;
                  }
+                 // Try to load the last used Drive file ID from local storage
+                 this.lastDriveFileId = localStorage.getItem('lastDriveFileId') || null;
             }
 
              clearAllData() {
@@ -1379,6 +1796,11 @@ header i, nav i, .header i, .navbar i {
                           monthlyData: {},
                           expenseCategories: ['Alimentação', 'Moradia', 'Transporte', 'Lazer', 'Educação', 'Saúde', 'Vestuário', 'Assinaturas', 'Outros']
                      };
+                      // Clear last Drive file ID
+                      this.lastDriveFileId = null;
+                      localStorage.removeItem('lastDriveFileId');
+
+
                       // Reset current month selections
                      const today = new Date();
                      const initialMonth = today.toISOString().slice(0, 7);
@@ -1534,7 +1956,7 @@ header i, nav i, .header i, .navbar i {
                  this.renderDashboardCharts(month);
             }
 
-            
+
 
         // --- Budget Dashboard Update ---
         updateBudgetDashboard() {
@@ -1988,12 +2410,8 @@ header i, nav i, .header i, .navbar i {
                         this.updateCategoryTotal(cat); // Ensure individual category totals are up-to-date
                   });
 
-                  // Optional: Display total budgeted income/expenses somewhere in the budget tab?
-                  // Example: Update a summary element if it exists
-                  // const totalIncomeEl = document.getElementById('totalBudgetedIncomeDisplay');
-                  // if(totalIncomeEl) totalIncomeEl.textContent = totalIncome.toFixed(2);
-                  // const totalExpenseEl = document.getElementById('totalBudgetedExpenseDisplay');
-                  // if(totalExpenseEl) totalExpenseEl.textContent = totalExpenses.toFixed(2);
+                  // Update budget dashboard totals
+                  this.updateBudgetDashboard();
              }
 
              updateCategoryTotal(category) {
@@ -2437,7 +2855,7 @@ header i, nav i, .header i, .navbar i {
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                alert('Dados salvos com sucesso!');
+                alert('Dados salvos localmente com sucesso!');
             }
 
              saveHtml() {
@@ -2482,24 +2900,14 @@ header i, nav i, .header i, .navbar i {
                              }
 
                             this.saveState(); // Save the validated and loaded state
+                             this.lastDriveFileId = null; // Clear last used Drive file ID when loading local
+                             localStorage.removeItem('lastDriveFileId');
+
 
                              // Reset current views to reflect loaded data
-                             const today = new Date();
-                             const initialMonth = today.toISOString().slice(0, 7);
-                             this.currentDashboardMonth = initialMonth;
-                             this.currentBudgetMonth = '';
-                             this.currentTransactionFilterMonth = initialMonth;
-                             document.getElementById('dashboardMonth').value = initialMonth;
-                              document.getElementById('budgetMonth').value = '';
-                              document.getElementById('transactionFilterMonth').value = initialMonth;
+                             this.postLoadActions(); // Use the unified postLoadActions
 
-                             // Render all relevant components
-                             this.renderExpenseCategories(); // Render categories first
-                             this.updateDashboard(); // Then dashboard
-                             this.renderTransactions(); // Then transactions
-                             this.loadBudgetInitial(); // Reset budget tab
-
-                            alert('Dados carregados com sucesso!');
+                            alert('Dados carregados do arquivo local com sucesso!');
                         } else {
                             alert('Erro ao carregar arquivo: O formato dos dados é inválido ou está incompleto. Verifique o console (F12) para detalhes.');
                         }
@@ -2525,7 +2933,18 @@ header i, nav i, .header i, .navbar i {
 
                  // Validate expenseCategories
                  if (!Array.isArray(state.expenseCategories) || !state.expenseCategories.every(c => typeof c === 'string')) {
-                      console.error('Validation Error: expenseCategories is not an array of strings.'); return false;
+                      console.error('Validation Error: expenseCategories is not an array of strings.');
+                      // Attempt to fix if it's an array but contains non-strings
+                       if (Array.isArray(state.expenseCategories)) {
+                            state.expenseCategories = state.expenseCategories.filter(c => typeof c === 'string');
+                            console.warn('Validation Warning: Filtered out non-string categories.');
+                            if (state.expenseCategories.length === 0) {
+                                console.warn('Validation Warning: expenseCategories is empty after filtering. Using default.');
+                                state.expenseCategories = ['Alimentação', 'Moradia', 'Transporte', 'Lazer', 'Educação', 'Saúde', 'Vestuário', 'Assinaturas', 'Outros'];
+                            }
+                       } else {
+                            return false; // Cannot fix if not an array
+                       }
                  }
 
                  // Validate monthlyData structure
@@ -2558,7 +2977,6 @@ header i, nav i, .header i, .navbar i {
                            if (typeof t !== 'object' || t === null ||
                                typeof t.id !== 'string' || !t.id ||
                                typeof t.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(t.date) ||
-                               typeof t.description !== 'string' ||
                                (t.type !== 'renda' && t.type !== 'despesa') ||
                                typeof t.category !== 'string' ||
                                typeof t.amount !== 'string' || isNaN(parseFloat(t.amount))) {
@@ -2568,7 +2986,9 @@ header i, nav i, .header i, .navbar i {
 
                        // Validate budget object
                        if (typeof data.budget !== 'object' || data.budget === null) {
-                            console.error(`Validation Error: Budget for month "${month}" is not an object.`); return false;
+                            console.error(`Validation Error: Budget for month "${month}" is not an object.`);
+                            data.budget = { generalIncome: '0.00', incomeItems: [], expenseItems: {} }; // Attempt to fix
+                            console.warn(`Validation Warning: Budget for month "${month}" was invalid. Initialized default budget structure.`);
                        }
                        // Validate budget fields
                        if (typeof data.budget.generalIncome !== 'string' || isNaN(parseFloat(data.budget.generalIncome))) {
@@ -2576,37 +2996,55 @@ header i, nav i, .header i, .navbar i {
                             data.budget.generalIncome = "0.00"; // Attempt to fix
                        }
                        if (!Array.isArray(data.budget.incomeItems)) {
-                            console.error(`Validation Error: budget.incomeItems for month "${month}" is not an array.`); return false;
+                            console.error(`Validation Error: budget.incomeItems for month "${month}" is not an array.`);
+                            data.budget.incomeItems = []; // Attempt to fix
+                             console.warn(`Validation Warning: budget.incomeItems for month "${month}" was invalid. Initialized empty array.`);
+                       } else {
+                           // Validate income items
+                           for (const item of data.budget.incomeItems) {
+                                if (typeof item !== 'object' || item === null ||
+                                    typeof item.id !== 'string' || !item.id ||
+                                    typeof item.description !== 'string' ||
+                                    typeof item.amount !== 'string' || isNaN(parseFloat(item.amount))) {
+                                    console.error(`Validation Error: Invalid income budget item found in month "${month}":`, item);
+                                     // Optionally remove invalid item: data.budget.incomeItems = data.budget.incomeItems.filter(...)
+                                }
+                           }
                        }
-                        // Validate income items
-                        for (const item of data.budget.incomeItems) {
-                             if (typeof item !== 'object' || item === null ||
-                                 typeof item.id !== 'string' || !item.id ||
-                                 typeof item.description !== 'string' ||
-                                 typeof item.amount !== 'string' || isNaN(parseFloat(item.amount))) {
-                                  console.error(`Validation Error: Invalid income budget item found in month "${month}":`, item); return false;
-                             }
-                        }
+
                         if (typeof data.budget.expenseItems !== 'object' || data.budget.expenseItems === null) {
-                             console.error(`Validation Error: budget.expenseItems for month "${month}" is not an object.`); return false;
+                             console.error(`Validation Error: budget.expenseItems for month "${month}" is not an object.`);
+                             data.budget.expenseItems = {}; // Attempt to fix
+                              console.warn(`Validation Warning: budget.expenseItems for month "${month}" was invalid. Initialized empty object.`);
+                        } else {
+                            // Validate expense items per category
+                            for (const category in data.budget.expenseItems) {
+                                 if (!Array.isArray(data.budget.expenseItems[category])) {
+                                      console.error(`Validation Error: budget.expenseItems["${category}"] for month "${month}" is not an array.`);
+                                      delete data.budget.expenseItems[category]; // Remove invalid entry
+                                       console.warn(`Validation Warning: budget.expenseItems["${category}"] for month "${month}" was invalid. Removed category data.`);
+                                 } else {
+                                     for (const item of data.budget.expenseItems[category]) {
+                                          if (typeof item !== 'object' || item === null ||
+                                              typeof item.id !== 'string' || !item.id ||
+                                              typeof item.description !== 'string' ||
+                                              typeof item.amount !== 'string' || isNaN(parseFloat(item.amount))) {
+                                           console.error(`Validation Error: Invalid expense budget item found in category "${category}" for month "${month}":`, item);
+                                            // Optionally remove invalid item: data.budget.expenseItems[category] = data.budget.expenseItems[category].filter(...)
+                                          }
+                                     }
+                                 }
+                            }
+                             // Ensure arrays exist for valid categories if missing
+                             this.state.expenseCategories.forEach(cat => {
+                                 if (!Array.isArray(data.budget.expenseItems[cat])) {
+                                     data.budget.expenseItems[cat] = [];
+                                 }
+                             });
                         }
-                         // Validate expense items per category
-                         for (const category in data.budget.expenseItems) {
-                              if (!Array.isArray(data.budget.expenseItems[category])) {
-                                   console.error(`Validation Error: budget.expenseItems["${category}"] for month "${month}" is not an array.`); return false;
-                              }
-                              for (const item of data.budget.expenseItems[category]) {
-                                   if (typeof item !== 'object' || item === null ||
-                                       typeof item.id !== 'string' || !item.id ||
-                                       typeof item.description !== 'string' ||
-                                       typeof item.amount !== 'string' || isNaN(parseFloat(item.amount))) {
-                                        console.error(`Validation Error: Invalid expense budget item found in category "${category}" for month "${month}":`, item); return false;
-                                   }
-                              }
-                         }
                  }
 
-                 console.log("Validation successful.");
+                 console.log("Validation successful (with potential fixes).");
                  return true; // All checks passed
             }
 
@@ -2626,9 +3064,9 @@ header i, nav i, .header i, .navbar i {
                      ['Resumo Mensal', month],
                      [],
                      ['Saldo Mês Anterior', summary.previousBalance.toFixed(2)],
-                     ['Receitas Realizadas', summary.totalRealizedIncome.toFixed(2)],
-                     ['Despesas Realizadas', summary.totalRealizedExpenses.toFixed(2)],
-                     ['Saldo Atual (Disponível)', summary.cumulativeBalance.toFixed(2)],
+                     ['(+) Receitas Realizadas', summary.totalRealizedIncome.toFixed(2)],
+                     ['(-) Despesas Realizadas', summary.totalRealizedExpenses.toFixed(2)],
+                     ['(=) Saldo Atual (Disponível):', summary.cumulativeBalance.toFixed(2)],
                      [],
                      ['Despesas Orçadas (Total)', summary.totalBudgetedExpenses.toFixed(2)],
                      ['Saldo do Orçamento (Orçado - Realizado)', summary.budgetBalance.toFixed(2)],
@@ -2697,21 +3135,21 @@ header i, nav i, .header i, .navbar i {
 
                  try {
                       // Library checks
-                      if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF não carregado.');
-                      // Plugin check removed
-                      if (!window.html2canvas) throw new Error('html2canvas não carregado.');
+                      if (typeof jspdf === 'undefined' || typeof jspdf.jsPDF === 'undefined') throw new Error('jsPDF não carregado.');
+                      if (typeof html2canvas === 'undefined') throw new Error('html2canvas não carregado.');
 
-                      const { jsPDF } = window.jspdf;
+                      const { jsPDF } = jspdf; // Use jspdf from global scope
                       const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-                      
-        // Override autoTable to disable didDrawCell to avoid colSpan error (Patch)
-        const originalAutoTable = doc.autoTable.bind(doc);
-        doc.autoTable = function(opts){
-            opts = opts || {};
-            opts.didDrawCell = function () {};
-            return originalAutoTable(opts);
-        };
-        const pageWidth = doc.internal.pageSize.getWidth();
+
+                      // Override autoTable to disable didDrawCell to avoid colSpan error (Patch)
+                      const originalAutoTable = doc.autoTable.bind(doc);
+                      doc.autoTable = function(opts){
+                          opts = opts || {};
+                           // Temporarily disable didDrawCell as it can cause issues with complex content
+                          // opts.didDrawCell = function () {};
+                          return originalAutoTable(opts);
+                      };
+                      const pageWidth = doc.internal.pageSize.getWidth();
                       const margin = 15;
                       let yOffset = 20; // Start lower for header
                       const lineSpacing = 7;
@@ -2722,14 +3160,19 @@ header i, nav i, .header i, .navbar i {
                       // --- Helper Functions ---
                        const addHeaderFooter = (pageNumber, pageCount) => {
                            // Header
-                           doc.setFillColor(getComputedStyle(document.documentElement).getPropertyValue('--primary'));
+                           const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim();
+                           const primaryRgb = this.hexToRgb(primaryColor);
+
+                           doc.setFillColor(primaryRgb[0], primaryRgb[1], primaryRgb[2]);
                            doc.rect(0, 0, pageWidth, 15, 'F'); // Header rectangle
                            doc.setFontSize(14);
                            doc.setTextColor(255, 255, 255);
                            doc.text(`Relatório Financeiro Mensal - ${month}`, margin, 10);
                            // Footer
                            doc.setFontSize(8);
-                            doc.setTextColor(getComputedStyle(document.documentElement).getPropertyValue('--text-secondary'));
+                            const textSecondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim();
+                            const textSecondaryRgb = this.hexToRgb(textSecondaryColor);
+                            doc.setTextColor(textSecondaryRgb[0], textSecondaryRgb[1], textSecondaryRgb[2]);
                             const footerText = `Página ${pageNumber} de ${pageCount}`;
                             doc.text(footerText, pageWidth - margin - doc.getTextWidth(footerText), doc.internal.pageSize.getHeight() - 10);
                        };
@@ -2820,17 +3263,27 @@ header i, nav i, .header i, .navbar i {
                        // Section 3: Gráficos (Capture and Add)
                        const dashboardTab = document.getElementById('dashboard');
                        const originalDisplay = dashboardTab.style.display;
+                       const originalPosition = dashboardTab.style.position;
+                       const originalZIndex = dashboardTab.style.zIndex;
+
                        dashboardTab.style.display = 'block'; // Ensure visible for capture
+                       dashboardTab.style.position = 'absolute'; // Position absolutely
+                       dashboardTab.style.zIndex = -1; // Send to back
+
 
                        const chartContainer = dashboardTab.querySelector('.comparativo-container');
                        if (chartContainer && chartContainer.offsetHeight > 0) {
                             addSectionTitle('Distribuição de Despesas (Orçado vs. Realizado)');
                             try {
                                 const chartCanvas = await html2canvas(chartContainer, {
-                                     scale: 1.5, // Increase scale slightly
+                                     scale: 2, // Increase scale for better quality
                                      backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--background').trim(),
                                      logging: false,
-                                     useCORS: true // Important if using external fonts/images
+                                     useCORS: true, // Important if using external fonts/images
+                                      ignoreElements: (element) => {
+                                           // Ignore elements outside the chart container if necessary
+                                           return !chartContainer.contains(element) && element !== chartContainer;
+                                      }
                                 });
                                 const chartImgData = chartCanvas.toDataURL('image/png');
                                 if (chartImgData && chartImgData !== 'data:,') {
@@ -2838,7 +3291,7 @@ header i, nav i, .header i, .navbar i {
                                      const chartWidth = pageWidth - (2 * margin);
                                      const chartHeight = (chartProps.height * chartWidth) / chartProps.width;
 
-                                     if (yOffset + chartHeight > doc.internal.pageSize.getHeight() - 20) { // Check space
+                                     if (yOffset + chartHeight > doc.internal.pageSize.getHeight() - 30) { // Check space
                                          doc.addPage();
                                           yOffset = 20; // Reset yOffset after header space
                                           addHeaderFooter(doc.internal.pages.length, doc.internal.pages.length); // Header for new page
@@ -2858,7 +3311,11 @@ header i, nav i, .header i, .navbar i {
                        } else {
                             console.warn("Chart container not found or not visible.");
                        }
-                       dashboardTab.style.display = originalDisplay; // Restore original display
+
+                       // Restore original styles
+                       dashboardTab.style.display = originalDisplay;
+                       dashboardTab.style.position = originalPosition;
+                       dashboardTab.style.zIndex = originalZIndex;
 
 
                        // Section 4: Orçamento Detalhado
@@ -2879,12 +3336,21 @@ header i, nav i, .header i, .navbar i {
                                 });
                            }
                        });
+
+                       // Check space for the budget table before adding
+                       const budgetTableHeightEstimate = budgetTableBody.length * (tableFontSize - 1 + cellPadding * 2) * 1.2; // Rough estimate
+                        if (yOffset + budgetTableHeightEstimate > doc.internal.pageSize.getHeight() - 30) { // Check space
+                             doc.addPage();
+                             yOffset = 20; // Reset yOffset
+                        }
+
+
                        doc.autoTable({
                             startY: yOffset,
                             head: [['Categoria', 'Descrição/Item', 'Valor Orçado']],
                             body: budgetTableBody,
                              theme: 'grid', // Use grid theme for clarity
-                            styles: { fontSize: tableFontSize -1, cellPadding: cellPadding, textColor: themeColors.textRgb },
+                            styles: { fontSize: tableFontSize -1, cellPadding: cellPadding, textColor: themeColors.textRgb, overflow: 'linebreak' }, // Added overflow
                             headStyles: { fillColor: themeColors.primaryRgb, textColor: [255,255,255], fontStyle: 'bold' },
                              columnStyles: {
                                  0: { cellWidth: 40 },
@@ -2900,6 +3366,7 @@ header i, nav i, .header i, .navbar i {
                             },
                             didDrawPage: (data) => addHeaderFooter(data.pageNumber, data.pageCount)
                        });
+                       yOffset = doc.autoTable.previous.finalY + sectionSpacing;
 
 
                       // Finalize and Save
@@ -2908,20 +3375,37 @@ header i, nav i, .header i, .navbar i {
                           doc.setPage(i);
                           addHeaderFooter(i, pageCount); // Update footers with final page count
                       }
+
+                       // Restore original theme
+                       if (originalTheme) {
+                           document.documentElement.setAttribute('data-theme', originalTheme);
+                       } else {
+                           document.documentElement.removeAttribute('data-theme');
+                       }
+
                       doc.save(`Relatorio_Financeiro_${month}.pdf`);
 
                  } catch (error) {
                       console.error('Erro fatal ao gerar PDF:', error);
                       alert(`Ocorreu um erro ao gerar o PDF: ${error.message}. Verifique o console (F12) para mais detalhes.`);
+                       // Ensure theme is restored even on error
+                       const originalTheme = document.documentElement.getAttribute('data-theme');
+                        if (originalTheme) {
+                            document.documentElement.setAttribute('data-theme', originalTheme);
+                        } else {
+                            document.documentElement.removeAttribute('data-theme');
+                        }
                  }
             }
 
              hexToRgb(hex) {
                  if (!hex || typeof hex !== 'string') return [0, 0, 0]; // Default to black if invalid
-                 let shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-                 hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-                 let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                 return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : [0, 0, 0];
+                 hex = hex.replace(/^#/, ''); // Remove # if present
+                 let bigint = parseInt(hex, 16);
+                 let r = (bigint >> 16) & 255;
+                 let g = (bigint >> 8) & 255;
+                 let b = bigint & 255;
+                 return [r, g, b];
              }
 
 
@@ -2929,369 +3413,94 @@ header i, nav i, .header i, .navbar i {
 
 
         // --- Global Initialization ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check required libraries
-            if (typeof Chart === 'undefined' || !window.jspdf || !window.html2canvas || !window.XLSX) {
-                 console.error("Missing required libraries (Chart.js, jsPDF, html2canvas, XLSX). PDF/Excel export or charts might fail.");
-                 // Optionally display an error message to the user
-                 // const errorDiv = document.createElement('div');
-                 // errorDiv.textContent = "Erro: Bibliotecas essenciais não carregadas. Algumas funcionalidades podem não funcionar.";
-                 // errorDiv.style.color = 'red'; errorDiv.style.textAlign = 'center'; errorDiv.style.padding = '1rem';
-                 // document.body.prepend(errorDiv);
-            }
+        let financeManager; // Declare globally
 
-            const financeManager = new FinanceManager();
-            window.financeManager = financeManager; // Make accessible globally if needed (e.g., for inline JS onclick, though delegation is preferred)
+        window.onload = function () {
+            // Initialize the Google Identity Services client (for Sign-In Button)
+             google.accounts.id.initialize({
+                 client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com', // REPLACE with your Client ID
+                 callback: handleCredentialResponse, // Callback function for ID token response
+                 auto_select: false // Set to true for auto sign-in on subsequent visits
+             });
+            // Render the Google Sign-In button if you want a visible button
+            google.accounts.id.renderButton(
+                 document.querySelector(".g_id_signin"), // Select the button container
+                 { size: "large" }  // Customize button appearance
+            );
+            // You can also use google.accounts.id.prompt() for One Tap sign-in
 
-             // Initial call to handle potential hash links (though not used here)
-             // financeManager.handleHashChange();
-        });
+
+            // Create the FinanceManager instance after GSI is initialized
+             financeManager = new FinanceManager();
+             window.financeManager = financeManager; // Make accessible globally
+
+             // Call handleCredentialResponse from the FinanceManager instance
+             // This is needed because the GSI callback is set globally but needs access to the instance's methods and state.
+             window.handleCredentialResponse = financeManager.handleCredentialResponse.bind(financeManager);
+
+             // Trigger initial load logic
+             financeManager.loadLastDriveFile(); // This will try to load from Drive if signed in, otherwise load from local storage.
+        };
+
+        // Override loadBudgetInitial to also update the budget dashboard - Redundant with postLoadActions
+        // FinanceManager.prototype.loadBudgetInitial = function() {
+        //     const todayMonth = new Date().toISOString().slice(0, 7);
+        //     const bmInput = document.getElementById('budgetMonth');
+        //     bmInput.value = this.currentBudgetMonth || todayMonth;
+        //     this.currentBudgetMonth = bmInput.value;
+        //     this.ensureMonthData(this.currentBudgetMonth);
+        //     this.loadBudget();
+        //     this.updateBudgetDashboard(); // Update dashboard cards
+        // };
+
+         // Update previous month balance on dashboard month change - Redundant with handleDashboardMonthChange
+         // document.addEventListener('DOMContentLoaded', () => {
+         //     const dashboardMonthInput = document.getElementById('dashboardMonth');
+         //     const prevInputDashboard = document.getElementById('previousMonthBalance');
+         //     function updateDashboardPrevBalance() {
+         //         const monthVal = dashboardMonthInput.value;
+         //         if (!monthVal) {
+         //             prevInputDashboard.value = '';
+         //             return;
+         //         }
+         //         let prevDate = new Date(monthVal + '-01');
+         //         prevDate.setMonth(prevDate.getMonth() - 1);
+         //         const prevMonth = prevDate.toISOString().slice(0,7);
+         //         try {
+         //             // Use financeManager instance to access state and methods
+         //             financeManager.ensureMonthData(prevMonth);
+         //             const sumPrev = financeManager.calculateMonthSummary(prevMonth);
+         //             prevInputDashboard.value = sumPrev.cumulativeBalance.toFixed(2);
+         //         } catch(e) {
+         //             console.warn('Saldo do mês anterior não disponível:', prevMonth, e);
+         //             prevInputDashboard.value = '';
+         //         }
+         //     }
+         //     // Initialize with current month
+         //     const today = new Date();
+         //     const initMonth = today.toISOString().slice(0,7);
+         //     dashboardMonthInput.value = initMonth;
+         //      // Initial update is now handled by postLoadActions
+         //     // updateDashboardPrevBalance();
+         //     // Update on month change and button click handled by setupEventListeners
+         //     // dashboardMonthInput.addEventListener('change', updateDashboardPrevBalance);
+         //     // document.getElementById('loadDashboardMonth').addEventListener('click', updateDashboardPrevBalance);
+         // });
+
+
+        // On initial load, set budgetMonth and update dashboard - Redundant with postLoadActions
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const budgetMonthInput = document.getElementById('budgetMonth');
+        //     if (budgetMonthInput) {
+        //         const initialMonth = new Date().toISOString().slice(0, 7);
+        //         budgetMonthInput.value = initialMonth;
+        //         // Use financeManager instance
+        //         // financeManager.currentBudgetMonth = initialMonth;
+        //         // financeManager.ensureMonthData(initialMonth);
+        //         // financeManager.updateBudgetDashboard();
+        //     }
+        // });
 
     </script>
-<script>
-FinanceManager.prototype.exportToPDF = function () {
-    const originalTheme = document.documentElement.getAttribute('data-theme');
-    document.documentElement.setAttribute('data-theme', 'light');
-
-    // Determine report month
-    let monthInput = document.getElementById('budgetMonth');
-    let month = monthInput && monthInput.value ? monthInput.value : new Date().toISOString().slice(0,7);
-    this.currentBudgetMonth = month;
-    try { this.ensureMonthData(month); } catch(e){}
-
-    const sum = this.calculateMonthSummary(month) || {};
-    const doc = new jspdf.jsPDF('p', 'pt', 'a4');
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const margin = 40;
-    let y = margin;
-
-    // Page 1: Header, summary, charts, saldos
-    doc.setFont('helvetica','bold').setFontSize(22).setTextColor(0,84,147);
-    doc.text('Relatório Financeiro – ' + month, pageWidth/2, y, { align:'center' });
-    y += 30;
-    doc.setDrawColor(0,84,147).setLineWidth(1.2).line(margin, y, pageWidth - margin, y);
-    y += 25;
-
-    // Summary Boxes
-    const items = [
-        {label:'Receitas Orçadas',value:sum.totalBudgetedIncome||0,color:[60,179,113]},
-        {label:'Despesas Orçadas',value:sum.totalBudgetedExpenses||0,color:[220,20,60]},
-        {label:'Receitas Realizadas',value:sum.totalRealizedIncome||0,color:[34,139,34]},
-        {label:'Despesas Realizadas',value:sum.totalRealizedExpenses||0,color:[178,34,34]}
-    ];
-    const boxW = (pageWidth - margin*3)/2, boxH = 60;
-    items.forEach((it,i)=>{
-        const col = i%2, row = Math.floor(i/2);
-        const x = margin + (boxW+margin)*col, by = y + (boxH+15)*row;
-        doc.setFillColor(...it.color).roundedRect(x,by,boxW,boxH,5,5,'F');
-        doc.setTextColor(255).setFont('helvetica','normal').setFontSize(11);
-        doc.text(it.label, x+10, by+20);
-        doc.setFont('helvetica','bold').setFontSize(13);
-        doc.text('R$ ' + it.value.toFixed(2), x+10, by+42);
-    });
-    y += (boxH + 15)*2 + 10;
-
-    // Charts side by side
-    const chartIds = ['budgetDistributionChart','realizedDistributionChart'];
-    const chartW = (pageWidth - margin*3)/2;
-    let maxH = 0;
-    chartIds.forEach((id,i) => {
-        const canvas = document.getElementById(id);
-        if (canvas) {
-            const tmp = document.createElement('canvas');
-            tmp.width = canvas.width; tmp.height = canvas.height;
-            const ctx = tmp.getContext('2d');
-            ctx.fillStyle = '#ffffff'; ctx.fillRect(0,0,tmp.width,tmp.height);
-            ctx.drawImage(canvas,0,0);
-            const img = tmp.toDataURL('image/png',1.0);
-            const h = chartW * (canvas.height / canvas.width);
-            maxH = Math.max(maxH, h);
-            const x = margin + (chartW + margin)*i;
-            doc.addImage(img,'PNG',x,y,chartW,h);
-            doc.setFont('helvetica','normal').setFontSize(10).setTextColor(0);
-            const titles = {'budgetDistributionChart':'Distribuição Orçada','realizedDistributionChart':'Distribuição Realizada'};
-            doc.text(titles[id], x + chartW/2, y + h + 12, {align:'center'});
-        }
-    });
-    y += maxH + 40;
-
-    // Saldo Boxes
-    const saldo = [
-        {label:'Saldo Orçado',value:(sum.totalBudgetedIncome - sum.totalBudgetedExpenses)||0,color:[70,130,180]},
-        {label:'Saldo Realizado',value:(sum.totalRealizedIncome - sum.totalRealizedExpenses)||0,color:[100,149,237]}
-    ];
-    const salW = (pageWidth - margin*3)/2, salH = 50;
-    saldo.forEach((it,i)=>{
-        const x = margin + (salW+margin)*i;
-        doc.setFillColor(...it.color).roundedRect(x,y,salW,salH,5,5,'F');
-        doc.setTextColor(255).setFont('helvetica','bold').setFontSize(12);
-        doc.text(it.label, x+10, y+20);
-        doc.setFontSize(13).text('R$ ' + it.value.toFixed(2), x+10, y+40);
-    });
-
-    // Page 2: Transações Detalhadas
-    doc.addPage();
-    let y2 = margin;
-    doc.setFont('helvetica','bold').setFontSize(16).setTextColor(0);
-    doc.text('Transações Detalhadas – ' + month, pageWidth/2, y2, {align:'center'});
-    y2 += 20;
-    const txTable = document.querySelector('#transactionsTable');
-    if (txTable && doc.autoTable) {
-        doc.autoTable({
-            html: txTable,
-            startY: y2,
-            margin: { left: margin, right: margin },
-            styles: { cellPadding: 3, fontSize: 9 },
-            headStyles: { fillColor: [60,60,60] },
-            theme: 'grid',
-            didParseCell: function(data) {
-                if (data.row.section==='head' && data.cell.raw.innerText.trim()==='Ações') {
-                    data.column.hidden = true;
-                }
-            }
-        });
-    }
-
-    // Restore theme and save
-    if (originalTheme) {
-        document.documentElement.setAttribute('data-theme', originalTheme);
-    } else {
-        document.documentElement.removeAttribute('data-theme');
-    }
-    doc.save('Relatorio_Financeiro_' + month + '.pdf');
-};
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const dashboardMonthInput = document.getElementById('dashboardMonth');
-    const prevInputDashboard = document.getElementById('previousMonthBalance');
-    function updateDashboardPrevBalance() {
-        const monthVal = dashboardMonthInput.value;
-        let prevDate = monthVal ? new Date(monthVal + '-01') : new Date();
-        prevDate.setMonth(prevDate.getMonth() - 1);
-        const prevMonth = prevDate.toISOString().slice(0,7);
-        try {
-            financeManager.ensureMonthData(prevMonth);
-            const sumPrev = financeManager.calculateMonthSummary(prevMonth);
-            prevInputDashboard.value = sumPrev.cumulativeBalance.toFixed(2);
-        } catch(e) {
-            console.warn('Saldo do mês anterior não disponível:', prevMonth);
-            prevInputDashboard.value = '';
-        }
-    }
-    // Initialize with current month
-    const today = new Date();
-    const initMonth = today.toISOString().slice(0,7);
-    dashboardMonthInput.value = initMonth;
-    updateDashboardPrevBalance();
-    // Update on month change and button click
-    dashboardMonthInput.addEventListener('change', updateDashboardPrevBalance);
-    document.getElementById('loadDashboardMonth').addEventListener('click', updateDashboardPrevBalance);
-});
-</script>
-
-<script>
-// Override loadBudgetInitial to also update the budget dashboard
-FinanceManager.prototype.loadBudgetInitial = function() {
-    const todayMonth = new Date().toISOString().slice(0, 7);
-    const bmInput = document.getElementById('budgetMonth');
-    bmInput.value = this.currentBudgetMonth || todayMonth;
-    this.currentBudgetMonth = bmInput.value;
-    this.ensureMonthData(this.currentBudgetMonth);
-    this.loadBudget(); 
-    // Update dashboard cards
-    this.updateBudgetDashboard();
-};
-
-// On initial load, set budgetMonth and update dashboard
-document.addEventListener('DOMContentLoaded', () => {
-    const budgetMonthInput = document.getElementById('budgetMonth');
-    if (budgetMonthInput) {
-        const initialMonth = new Date().toISOString().slice(0, 7);
-        budgetMonthInput.value = initialMonth;
-        financeManager.currentBudgetMonth = initialMonth;
-        financeManager.ensureMonthData(initialMonth);
-        financeManager.updateBudgetDashboard();
-    }
-});
-</script>
-<script>
-// --- Google Drive Integration ---
-const CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID';
-const API_KEY = 'YOUR_GOOGLE_API_KEY';
-const APP_ID = 'YOUR_GOOGLE_APP_ID';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
-
-let tokenClient;
-let pickerInited = false;
-let gisInited = false;
-let oauthToken = '';
-
-function gapiLoaded() {
-  gapi.load('client:picker', initializePicker);
-}
-
-function initializePicker() {
-  pickerInited = true;
-  maybeEnableGoogleFeatures();
-}
-
-function gisLoaded() {
-  tokenClient = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: (tokenResponse) => {
-      if (tokenResponse.error !== undefined) {
-        console.error(tokenResponse);
-        return;
-      }
-      oauthToken = tokenResponse.access_token;
-      document.getElementById('googleAuthText').textContent = 'Google Conectado';
-      maybeEnableGoogleFeatures();
-    },
-  });
-  gisInited = true;
-  maybeEnableGoogleFeatures();
-}
-
-// authorize / connect button
-document.getElementById('googleAuthBtn').addEventListener('click', () => {
-  if (oauthToken) {
-      // Already authorized
-      alert('Conta Google já conectada.');
-      return;
-  }
-  tokenClient.requestAccessToken({ prompt: '' });
-});
-
-function maybeEnableGoogleFeatures() {
-  if (pickerInited && oauthToken) {
-      // enable buttons
-      document.getElementById('openDriveBtn').disabled = false;
-      document.getElementById('saveDriveBtn').disabled = false;
-      // Load last saved file
-      loadLastDriveFile();
-  }
-}
-
-// Open Drive picker
-document.getElementById('openDriveBtn').addEventListener('click', () => {
-  if (!oauthToken) {
-      alert('Conecte sua conta Google primeiro.');
-      return;
-  }
-  const view = new google.picker.View(google.picker.ViewId.DOCS);
-  view.setMimeTypes('application/json');
-  const picker = new google.picker.PickerBuilder()
-      .addView(view)
-      .setOAuthToken(oauthToken)
-      .setDeveloperKey(API_KEY)
-      .setAppId(APP_ID)
-      .setCallback(pickerCallback)
-      .build();
-  picker.setVisible(true);
-});
-
-function pickerCallback(data) {
-  if (data.action == google.picker.Action.PICKED) {
-      const fileId = data.docs[0].id;
-      downloadFileFromDrive(fileId);
-  }
-}
-
-function downloadFileFromDrive(fileId) {
-  gapi.client.drive.files.get({
-      fileId: fileId,
-      alt: 'media'
-  }).then(response => {
-      const json = response.body;
-      try {
-        const obj = JSON.parse(json);
-        if (window.fm) {
-          window.fm.state = obj;
-          window.fm.saveState(); // persist locally
-          window.fm.updateDashboard();
-          window.fm.renderTransactions();
-          window.fm.renderExpenseCategories();
-          window.fm.loadBudgetInitial();
-          alert('Dados carregados do Drive com sucesso!');
-        }
-      } catch(err) {
-        console.error(err);
-        alert('Erro ao carregar dados do Drive.');
-      }
-  });
-}
-
-// Save to Drive
-document.getElementById('saveDriveBtn').addEventListener('click', () => {
-  if (!oauthToken) {
-      alert('Conecte sua conta Google primeiro.');
-      return;
-  }
-  if (!window.fm) {
-      alert('Aplicação ainda não carregada.');
-      return;
-  }
-  const fileContent = JSON.stringify(window.fm.state, null, 2);
-  const metadata = {
-      'name': 'financas360_dados.json',
-      'mimeType': 'application/json'
-  };
-
-  const boundary = '-------314159265358979323846';
-  const delimiter = '\r\n--' + boundary + '\r\n';
-  const close_delim = '\r\n--' + boundary + '--';
-
-  const multipartRequestBody =
-      delimiter +
-      'Content-Type: application/json\r\n\r\n' +
-      JSON.stringify(metadata) + '\r\n' +
-      delimiter +
-      'Content-Type: application/json\r\n\r\n' +
-      fileContent + '\r\n' +
-      close_delim;
-
-  gapi.client.request({
-      path: '/upload/drive/v3/files',
-      method: 'POST',
-      params: {uploadType: 'multipart'},
-      headers: {
-        'Content-Type': 'multipart/related; boundary="' + boundary + '"'
-      },
-      body: multipartRequestBody
-  }).then((file) => {
-      alert('Dados salvos no Drive com sucesso!');
-  }, err => {
-      console.error(err);
-      alert('Erro ao salvar no Drive.');
-  });
-});
-
-function loadLastDriveFile() {
-  // list last modified file with our name
-  gapi.client.drive.files.list({
-    q: "name contains 'financas360_dados' and mimeType='application/json'",
-    orderBy: 'modifiedTime desc',
-    pageSize: 1,
-    fields: 'files(id, name)'
-  }).then(res => {
-    if(res.result.files && res.result.files.length > 0) {
-        downloadFileFromDrive(res.result.files[0].id);
-    }
-  });
-}
-
-// Initialize
-window.addEventListener('load', () => {
-  window.fm = window.fm || null; // will be assigned in main script after FinanceManager instance
-  gapiLoaded();
-  gisLoaded();
-});
-
-// Disable drive buttons initially
-document.getElementById('openDriveBtn').disabled = true;
-document.getElementById('saveDriveBtn').disabled = true;
-</script>
 </body>
 </html>
