@@ -2,6 +2,9 @@
 
 <html data-theme="light" lang="pt-BR">
 <head>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
 <!-- Atenção: NÃO insira a client_secret em código front‑end. Ela foi omitida por segurança. Para fluxos client‑side, apenas CLIENT_ID, API_KEY e APP_ID são necessários. -->
 
 <meta charset="utf-8"/>
@@ -854,18 +857,16 @@ header i, nav i, .header i, .navbar i {
 <input accept=".json" class="hidden-input" id="openFile" type="file"/>
 <button id="exportPDF"><i class="fas fa-file-pdf" style="color: var(--accent-color);"></i> Exportar PDF</button>
 <button id="exportExcel"><i class="fas fa-file-excel" style="color: var(--accent-color);"></i> Exportar Excel</button>
+<button id="google-connect-btn" class="nav-btn"><i class="fab fa-google-drive" style="color: var(--accent-color);"></i> Conectar Google</button>
+<button id="google-logout-btn" class="nav-btn" style="display:none;"><i class="fas fa-sign-out-alt" style="color: var(--accent-color);"></i> Sair</button>
+<button id="themeToggle" class="theme-toggle"><i class="fas fa-moon" style="color: var(--accent-color);"></i> <span id="themeToggleText">Modo Escuro</span></button>
 </div>
 </div>
 </nav>
-<button id="google-connect-btn" class="nav-btn"><i class="fab fa-google-drive"></i> Conectar Google</button>
-<button id="google-logout-btn" class="nav-btn" style="display:none;"><i class="fas fa-sign-out-alt"></i> Sair</button>
 
-<div class="header-utilities">
-<button class="theme-toggle" id="themeToggle">
-<i class="fas fa-moon" style="color: var(--accent-color);"></i>
-<span id="themeToggleText">Modo Escuro</span>
-</button>
-</div>
+
+
+
 </div>
 </header>
 <script>
@@ -1250,7 +1251,6 @@ header i, nav i, .header i, .navbar i {
                  // This function is called when a tab button is clicked
                  // It handles loading data or setting up the view for the newly active tab
                  // Visual switching is handled by setupTabs
-                 console.log(`Switching to tab: ${tabId}`);
                  switch (tabId) {
                      case 'dashboard':
                           this.currentDashboardMonth = document.getElementById('dashboardMonth').value || new Date().toISOString().slice(0, 7);
@@ -3209,8 +3209,8 @@ function signOut() {
 }
 
 function maybeEnableButtons() {
-    const openBtn = document.getElementById('btn-open-drive');
-    const saveBtn = document.getElementById('btn-save-drive');
+    const openBtn = document.getElementById('driveOpenBtn');
+    const saveBtn = document.getElementById('driveSaveBtn');
     if (pickerApiLoaded && accessToken) {
         openBtn.disabled = false;
         saveBtn.disabled = false;
@@ -3348,8 +3348,8 @@ function loadLastDriveFile() {
 }
 
 function toggleDriveButtons(enabled) {
-    document.getElementById('btn-open-drive').disabled = !enabled;
-    document.getElementById('btn-save-drive').disabled = !enabled;
+    document.getElementById('driveOpenBtn').disabled = !enabled;
+    document.getElementById('driveSaveBtn').disabled = !enabled;
 }
 
 </script>
