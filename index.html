@@ -862,6 +862,21 @@ header i, nav i, .header i, .navbar i {
     color: var(--accent-color) !important;
 }
 </style>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    const timeout = setTimeout(() => {
+        if (typeof gapi === 'undefined' || !window.pickerApiLoaded) {
+            const warnMessage = '⚠️ Seu navegador está bloqueando cookies ou armazenamento necessários para o funcionamento do Google Drive.
+' +
+                                'Por favor, desative temporariamente a prevenção de rastreamento ou permita cookies de terceiros para utilizar todas as funcionalidades.';
+            alert(warnMessage);
+            console.warn(warnMessage);
+        }
+    }, 4000);
+});
+</script>
+
+
 </head>
 <body>
 <header class="app-header">
