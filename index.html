@@ -1,14 +1,9 @@
-<!DOCTYPE html>
-
-<html data-theme="light" lang="pt-BR">
-<head>
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=" /><!-- Atenção: NÃO insira a client_secret em código front‑end. Ela foi omitida por segurança. Para fluxos client‑side, apenas CLIENT_ID, API_KEY e APP_ID são necessários. -->
-
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<html data-theme="dark" lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Gestão Financeira 360° - Novo Design</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <script>
         // UUID Generator Function
         function uuidv4() {
@@ -55,10 +50,11 @@
     
         /* Styles adapted from index (27).html and merged/adjusted for Finança6 functionality */
         :root {
-            --primary: #6366f1; /* Indigo */
-            --primary-hover: #4f46e5; /* Darker Indigo */
-            --secondary: #8b5cf6; /* Violet */
-            --accent: #a855f7; /* Purple */
+    --font-base: -apple-system, BlinkMacSystemFont, 'SF Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --primary: #64D2FF; /* Indigo */
+            --primary-hover: #0A84FF; /* Darker Indigo */
+            --secondary: #64d2ff; /* Violet */
+            --accent: #5e5ce6; /* Purple */
             --success: #10b981; /* Emerald */
             --danger: #ef4444; /* Red */
             --warning: #f59e0b; /* Amber */
@@ -76,10 +72,10 @@
         }
 
         [data-theme="dark"] {
-            --primary: #818cf8; /* Light Indigo */
-            --primary-hover: #6366f1; /* Indigo */
-            --secondary: #a78bfa; /* Light Violet */
-            --accent: #c084fc; /* Light Purple */
+            --primary: #64D2FF; /* Light Indigo */
+            --primary-hover: #0A84FF; /* Indigo */
+            --secondary: #64d2ff; /* Light Violet */
+            --accent: #5e5ce6; /* Light Purple */
             --success: #34d399; /* Light Emerald */
             --danger: #f87171; /* Light Red */
             --warning: #fbbf24; /* Light Amber */
@@ -95,7 +91,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-base);
         }
 
         body {
@@ -825,103 +821,688 @@
         }
 
     
-        /* Correção do dropdown */
-        .actions-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background: var(--surface);
-            min-width: 220px;
-            border-radius: 0.75rem;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            z-index: 1001;
-            padding: 0.5rem 0;
-            border: 1px solid var(--border);
-        }
-        
-        .dropdown-content.show {
-            display: block;
-        }
-        
-        /* Melhoria na visualização dos botões do Drive */
-        #driveSaveBtn, #driveOpenBtn {
-            width: 100%;
-            text-align: left;
-            background: none;
-            border: none;
-            padding: 0.75rem 1.5rem;
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        #driveSaveBtn:hover, #driveOpenBtn:hover {
-            background: var(--background);
-        }
+/* === Collapsible Header Bar Additions === */
+.nav-tabs.collapsed{
+    display:none;
+}
+#toggleHeaderBar{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
+/* Hide the toggle button on larger screens */
+@media (min-width: 769px){
+    #toggleHeaderBar{
+        display:none;
+    }
+}
 
-    </style>
+/* === Icon hover colorization === */
+.nav-btn i,
+.dropdown-content button i,
+.dropdown-content label i,
+.theme-toggle i {
+    color: var(--text-secondary) !important;
+    transition: color 0.2s ease;
+}
+.nav-btn:hover i,
+.dropdown-content button:hover i,
+.dropdown-content label:hover i,
+.theme-toggle:hover i,
+.nav-btn.active i {
+    color: var(--accent) !important;
+}
+
+/* === Collapsible full header === */
+.header-toggle-btn{
+    position: fixed;
+    top: 0.75rem;
+    left: auto; right: 0.75rem;
+    z-index: 2000;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--button-radius);
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+
+
+
+.app-header{
+    transition: transform 0.3s ease;
+}
+.app-header.collapsed{
+    transform: translateY(-100%);
+}
+
+
+/* === Custom Icon Coloring === */
+.nav-btn i,
+#actionsButton i,
+.dropdown-content button i,
+.dropdown-content label i,
+.theme-toggle i {
+    color: var(--text-secondary) !important;
+    transition: color 0.2s ease;
+}
+
+/* Unique hover colors */
+.nav-btn[data-tab="dashboard"]:hover i { color: #89CFF0 !important; } /* Indigo */
+.nav-btn[data-tab="budget"]:hover i { color: #10B981 !important; }     /* Emerald */
+.nav-btn[data-tab="transactions"]:hover i { color: #EF4444 !important; } /* Red */
+.nav-btn[data-tab="categories"]:hover i { color: #F59E0B !important; } /* Amber */
+#actionsButton:hover i { color: #8B5CF6 !important; }                  /* Violet */
+
+/* Hover colors for dropdown items (inherit icon original) */
+.dropdown-content button:hover i,
+.dropdown-content label:hover i,
+.theme-toggle:hover i {
+    color: var(--primary) !important;
+}
+
+/* === Enhanced Responsiveness === */
+@media (max-width: 768px) {
+    .nav-tabs {
+        flex-direction: column;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+    .nav-tabs .nav-btn {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+/* Override for solid green/red add buttons */
+.btn-success {
+    background: var(--success) !important;
+    color: white !important;
+    border: none !important;
+}
+.btn-danger {
+    background: var(--danger) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* Botão Atualizar Mês lilás padrão */
+#loadDashboardMonth {
+    background: linear-gradient(45deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* Ações dropdown icon hover color */
+.dropdown-content button:hover i,
+.dropdown-content label:hover i {
+    color: var(--primary-hover) !important;
+}
+
+/* Dropdown icons hover colors */
+.dropdown-content button:hover i.fa-trash {
+    color: var(--danger) !important; /* Red for Apagar Dados */
+}
+.dropdown-content button:hover i.fa-save {
+    color: var(--success) !important; /* Green for Salvar Dados */
+}
+.dropdown-content button:hover i.fa-download {
+    color: var(--success) !important; /* Green for Salvar HTML */
+}
+.dropdown-content label:hover i.fa-folder-open {
+    color: var(--warning) !important; /* Yellow for Abrir Dados */
+}
+/* PDF icon: white background, red icon */
+.dropdown-content button:hover i.fa-file-pdf {
+    background: white !important;
+    color: var(--danger) !important;
+    border-radius: 0.25rem;
+    padding: 0.1rem;
+}
+/* Excel icon: white background, green icon */
+.dropdown-content button:hover i.fa-file-excel {
+    background: white !important;
+    color: var(--success) !important;
+    border-radius: 0.25rem;
+    padding: 0.1rem;
+}
+
+/* Remove white outline for PDF and Excel icons on hover */
+.dropdown-content button:hover i.fa-file-pdf,
+.dropdown-content button:hover i.fa-file-excel {
+    background: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+}
+
+/* Botão Carregar Mês lilás padrão */
+#loadBudget {
+    background: linear-gradient(45deg, var(--primary), var(--secondary)) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* Equalize transaction add buttons to budget add buttons */
+#revenueForm button,
+#expenseForm button {
+    padding: 0.7rem 1.2rem !important;
+    font-size: 0.95rem !important;
+    height: calc(1.6em + 1.4rem + 2px) !important;
+    /* match border-radius and font-weight */
+    border-radius: var(--button-radius) !important;
+    font-weight: 500 !important;
+}
+
+/* === Toggle Button Inside Header === */
+.app-header {
+    position: relative;
+}
+.header-toggle-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--button-radius);
+    padding: 0.6rem;
+    cursor: pointer;
+    z-index: 1100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+/* Dropdown visibility */
+.dropdown-content { display: none; }
+.dropdown-content.show { display: block; }
+
+/* === Header Toggle Styles === */
+.app-header {
+    position: relative;
+    transition: transform 0.3s ease;
+}
+.header-header {
+    /* ensure header overflow hidden */
+    overflow: hidden;
+}
+.header-toggle-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--button-radius);
+    padding: 0.6rem;
+    cursor: pointer;
+    z-index: 1500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.app-header.collapsed {
+    transform: translateY(-100%);
+}
+
+/* === Fixed Toggle Button (always visible) === */
+.header-toggle-btn-fixed{
+    position: fixed;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--button-radius);
+    padding: 0.6rem;
+    z-index: 2000;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Header collapsed transform */
+.app-header{
+    transition: transform 0.3s ease;
+}
+.app-header.collapsed{
+    transform: translateY(-100%);
+}
+
+/* Actions dropdown opens outward */
+.actions-dropdown{ position:relative; }
+.actions-dropdown .dropdown-content{
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    display: none;
+    min-width: 200px;
+    z-index: 1500;
+}
+
+/* Responsive nav-tabs */
+@media(max-width: 768px){
+    .nav-tabs{
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 0.25rem;
+        padding-bottom: 0.5rem;
+    }
+    .nav-btn{
+        flex: 0 0 auto;
+        font-size: 0.85rem;
+    }
+}
+
+/* Enhance fixed toggle button styling */
+.header-toggle-btn-fixed{
+    box-shadow: var(--shadow);
+}
+@media(max-width: 480px){
+    .header-toggle-btn-fixed{
+        padding: 0.5rem;
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+}
+
+/* Responsive dropdown placement */
+.actions-dropdown .dropdown-content.show{
+    display:block;
+}
+@media(max-width: 768px){
+    .actions-dropdown .dropdown-content{
+        right: 0.5rem;
+        min-width: 160px;
+    }
+}
+
+.nav-tabs{
+    scrollbar-width: thin;
+}
+.nav-tabs::-webkit-scrollbar{
+    height: 6px;
+}
+.nav-tabs::-webkit-scrollbar-thumb{
+    background: var(--border);
+    border-radius: 3px;
+}
+
+@media(max-width: 480px){
+    .form-grid, .form-inline{
+        grid-template-columns: 1fr !important;
+        flex-direction: column !important;
+    }
+}
+
+/* Mobile dropdown positioning: overlay outside nav, no extra scroll */
+@media (max-width: 768px){
+    .actions-dropdown .dropdown-content{
+        position: fixed;
+        top: 3.25rem;           /* just below header */
+        right: 0.75rem;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+        border: 1px solid var(--border);
+    }
+}
+
+/* === Layout Improvements === */
+/* Increase overall container padding */
+.container {
+    padding: 2rem 1rem !important;
+}
+
+/* Header spacing */
+header.app-header .header-content {
+    padding: 1.5rem 2rem !important;
+}
+
+/* Navigation tabs spacing */
+.nav-tabs {
+    gap: 1rem !important;
+}
+
+/* Button padding and hover */
+.nav-btn {
+    padding: 0.8rem 1.2rem !important;
+    transition: background-color 0.2s ease, color 0.2s ease !important;
+}
+.nav-btn:hover,
+.nav-btn.active {
+    background-color: var(--primary-hover) !important;
+    color: white !important;
+}
+
+/* Card headings */
+.card h2 {
+    font-size: 1.8rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Card spacing */
+.card {
+    margin-bottom: 2rem !important;
+    padding: 2rem !important;
+}
+
+/* Stats grid spacing */
+.stats-grid {
+    gap: 1.5rem !important;
+}
+
+/* Form grid spacing */
+.form-grid {
+    gap: 2rem !important;
+}
+
+/* Comparative charts spacing */
+.comparativo-container {
+    gap: 2rem !important;
+}
+
+/* Tab content margin */
+.tab-content {
+    margin-top: 2rem !important;
+}
+
+/* Secondary bar example: sticky filter bar under header */
+.secondary-bar {
+    position: sticky;
+    top: 4rem;
+    background: var(--surface);
+    padding: 0.75rem 2rem;
+    box-shadow: var(--shadow);
+    z-index: 900;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Improve table readability */
+.editable-table th,
+.editable-table td {
+    padding: 1rem 1.5rem !important;
+}
+
+/* Footer spacing (if any) */
+footer {
+    padding: 2rem 1rem !important;
+    text-align: center;
+}
+
+/* macOS Catalina glass effect */
+[data-theme="light"] .app-header,
+[data-theme="dark"] .app-header,
+.card,
+.dropdown-content,
+.nav-btn,
+.header-toggle-btn-fixed{
+    backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(28,28,30,0.6); /* Dark glass */
+}
+[data-theme="light"] .card,
+[data-theme="light"] .dropdown-content,
+[data-theme="light"] .nav-btn,
+[data-theme="light"] .header-toggle-btn-fixed{
+    background-color: rgba(255,255,255,0.7); /* Light glass */
+}
+
+/* macOS pill buttons */
+.btn,
+.nav-btn,
+.theme-toggle,
+.header-toggle-btn-fixed{
+    border-radius: 12px !important;
+}
+
+/* Improve header visibility in light mode */
+[data-theme="light"] .app-header {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .app-header .header-content {
+    color: var(--text) !important;
+}
+[data-theme="light"] .app-header .app-title i {
+    color: var(--primary) !important;
+}
+[data-theme="light"] .app-header .nav-btn {
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+    border-color: transparent !important;
+}
+[data-theme="light"] .app-header .nav-btn:hover,
+[data-theme="light"] .app-header .nav-btn.active {
+    background: var(--primary) !important;
+    color: white !important;
+}
+[data-theme="light"] .header-toggle-btn-fixed {
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: var(--text-secondary) !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+}
+
+/* macOS Sonoma style adjustments */
+:root {
+    --card-radius: 1.5rem; /* 24px */
+    --button-radius: 1.25rem; /* 20px */
+    --shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Enhanced glass look */
+.app-header,
+.card,
+.dropdown-content,
+.nav-btn,
+.header-toggle-btn-fixed {
+    backdrop-filter: blur(30px) saturate(200%);
+    background-color: rgba(255,255,255,0.6) !important;
+}
+
+/* Dark theme glass */
+[data-theme="dark"] .app-header,
+[data-theme="dark"] .card,
+[data-theme="dark"] .dropdown-content,
+[data-theme="dark"] .nav-btn,
+[data-theme="dark"] .header-toggle-btn-fixed {
+    background-color: rgba(20,20,25,0.6) !important;
+}
+
+/* More rounded buttons and cards */
+.card, .btn, .nav-btn, .header-toggle-btn-fixed {
+    border-radius: var(--card-radius) !important;
+}
+
+/* Subtle shadows */
+.card {
+    box-shadow: var(--shadow) !important;
+}
+
+/* Sonoma accent on active nav */
+.nav-btn.active {
+    background-color: var(--primary) !important;
+    box-shadow: 0 4px 12px rgba(100,210,255,0.3) !important;
+}
+
+/* Update toggle button accent */
+.header-toggle-btn-fixed i {
+    color: var(--primary) !important;
+}
+
+/* Sonoma fonts and text color adjustments */
+body {
+    color: #1C1C1E;
+}
+[data-theme="dark"] body {
+    color: #E5E5EA;
+}
+
+/* Improve visibility of Dashboard icon on hover */
+.nav-btn[data-tab="dashboard"]:hover i {
+    color: var(--primary-hover) !important;
+}
+
+/* Blue color for all titles and subtitles */
+h1, h2, h3, h4, h5, h6,
+.card h2, .card h3, .card h4,
+.budget-section h3, .budget-section h4,
+.budget-category-section h4,
+.header-content .app-title {
+    color: var(--primary) !important;
+}
+
+
+
+
+
+/* === Advanced Typography & Readability Improvements === */
+
+/* Responsive font scaling */
+html { font-size: 100%; }
+@media (min-width: 768px){ html { font-size: 106%; } }
+@media (min-width: 1024px){ html { font-size: 112%; } }
+
+/* Base text styling */
+body {
+    line-height: 1.6;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    color: var(--text);
+    background: var(--background);
+}
+
+/* Limit line length for paragraphs */
+.container, .card > *:not(.stats-grid):not(.comparativo-container) {
+    max-width: 75ch;
+}
+
+/* Adjust headings with a modular scale */
+h1 { font-size: clamp(2rem, 5vw + 0.5rem, 2.75rem); }
+h2 { font-size: clamp(1.75rem, 4vw + 0.5rem, 2.25rem); }
+h3 { font-size: clamp(1.5rem, 3vw + 0.5rem, 1.75rem); }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.125rem; }
+h6 { font-size: 1rem; }
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-bottom: 0.5em;
+    text-wrap: balance;
+}
+
+/* Baby‑blue headings with stronger shadow for readability */
+h1, h2, h3, h4, h5, h6,
+.card h2, .card h3, .card h4,
+.budget-section h3, .budget-section h4,
+.budget-category-section h4,
+.header-content .app-title {
+    color: #7ACBFF !important;  /* slightly deeper baby blue for contrast */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Increase card heading spacing */
+.card h2, .card h3 {
+    margin-top: 0;
+    padding-bottom: 0.25em;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* Paragraph spacing */
+p { margin-bottom: 1.25em; }
+
+/* Improve link appearance */
+a {
+    color: var(--primary);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+}
+a:hover {
+    color: var(--primary-hover);
+}
+
+/* Ensure high contrast in light mode */
+[data-theme="light"] {
+    --text: #1C1C1E;
+}
+
+/* Responsive Transactions Table */
+@media(max-width: 768px){
+    #transactionsTable thead{
+        display:none;
+    }
+    #transactionsTable, #transactionsTable tbody, #transactionsTable tr, #transactionsTable td{
+        display:block;
+        width:100%;
+    }
+    #transactionsTable tr{
+        margin-bottom:1rem;
+        background: var(--surface);
+        padding:1rem;
+        border-radius: var(--input-radius);
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    #transactionsTable td{
+        text-align:left;
+        padding-left:50%;
+        position:relative;
+    }
+    #transactionsTable td::before{
+        content: attr(data-label);
+        position:absolute;
+        left:1rem;
+        width:45%;
+        white-space:nowrap;
+        font-weight:600;
+        color: var(--text-secondary);
+    }
+}
+</style>
 <style>
 /* Color header icons */
 header i, nav i, .header i, .navbar i {
     color: var(--accent-color) !important;
 }
-</style><style>header.app-header { transition: transform 0.3s ease; }</style>
+</style></head>
+<body inject_newsvd="true">
+<button id="toggleHeaderBar" class="header-toggle-btn-fixed" aria-label="Mostrar/ocultar cabeçalho">
+  <i class="fas fa-bars"></i>
+</button>
 
-<!-- Dica: Caso erros de chrome-extension apareçam, eles são gerados por extensões do navegador e não afetam o arquivo. Desative extensões de ad‑block ou tradutor para evitar esses logs. -->
-</head>
-<body>
 <header class="app-header">
 <div class="header-content">
+
+
 <div class="app-title">
-<i class="fas fa-coins" style="color: var(--accent-color);"></i> Finanças 360°
-            </div>
-<nav class="nav-tabs">
-<button class="nav-btn active" data-tab="dashboard"><i class="fas fa-chart-pie" style="color: var(--accent-color);"></i> Dashboard</button>
-<button class="nav-btn" data-tab="budget"><i class="fas fa-tasks" style="color: var(--accent-color);"></i> Orçamento</button> <button class="nav-btn" data-tab="transactions"><i class="fas fa-exchange-alt" style="color: var(--accent-color);"></i> Transações</button>
-<button class="nav-btn" data-tab="categories"><i class="fas fa-tags" style="color: var(--accent-color);"></i> Categorias</button>
+<i class="fas fa-coins" ></i> Finanças 360°
+            </div><nav class="nav-tabs">
+<button class="nav-btn active" data-tab="dashboard"><i class="fas fa-chart-pie" ></i> Dashboard</button>
+<button class="nav-btn" data-tab="budget"><i class="fas fa-tasks" ></i> Orçamento</button> <button class="nav-btn" data-tab="transactions"><i class="fas fa-exchange-alt" ></i> Transações</button>
+<button class="nav-btn" data-tab="categories"><i class="fas fa-tags" ></i> Categorias</button>
 <div class="actions-dropdown">
-<button class="nav-btn" id="actionsButton"><i class="fas fa-ellipsis-h" style="color: var(--accent-color);"></i> Ações</button>
+<button class="nav-btn" id="actionsButton"><i class="fas fa-ellipsis-h" ></i> Ações</button>
 <div class="dropdown-content" id="actionsDropdownContent">
-                    <button id="driveSaveBtn"><i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar no Drive</button>
-                    <button id="driveOpenBtn"><i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir no Drive</button>
-<button id="clearDataBtn"><i class="fas fa-trash" style="color: var(--accent-color);"></i> Apagar Dados</button>
-<button id="saveFile"><i class="fas fa-save" style="color: var(--accent-color);"></i> Salvar Dados</button>
-<button id="saveHtmlBtn"><i class="fas fa-download" style="color: var(--accent-color);"></i> Salvar HTML</button>
-<label class="nav-btn-dropdown-item" for="openFile"><i class="fas fa-folder-open" style="color: var(--accent-color);"></i> Abrir Dados</label>
-<input accept=".json" class="hidden-input" id="openFile" type="file"/>
-<button id="exportPDF"><i class="fas fa-file-pdf" style="color: var(--accent-color);"></i> Exportar PDF</button>
-<button id="exportExcel"><i class="fas fa-file-excel" style="color: var(--accent-color);"></i> Exportar Excel</button>
-<button id="google-connect-btn" class="nav-btn"><i class="fab fa-google-drive" style="color: var(--accent-color);"></i> Conectar Google</button>
-<button id="google-logout-btn" class="nav-btn" style="display:none;"><i class="fas fa-sign-out-alt" style="color: var(--accent-color);"></i> Sair</button>
-<button id="themeToggle" class="theme-toggle"><i class="fas fa-moon" style="color: var(--accent-color);"></i> <span id="themeToggleText">Modo Escuro</span></button>
-</div>
-</div>
-</nav>
+<button id="clearDataBtn"><i class="fas fa-trash" ></i> Apagar Dados</button>
+<button id="saveFile"><i class="fas fa-save" ></i> Salvar Dados</button>
+<button id="saveHtmlBtn"><i class="fas fa-download" ></i> Salvar HTML</button>
+<label class="nav-btn-dropdown-item" for="openFile"><i class="fas fa-folder-open" ></i> Abrir Dados</label>
+<input accept=".fin,.json" class="hidden-input" id="openFile" type="file">
+<button id="exportPDF"><i class="fas fa-file-pdf" ></i> Exportar PDF</button>
+<button id="exportExcel"><i class="fas fa-file-excel" ></i> Exportar Excel</button>
 
-
-
+<button class="theme-toggle" id="themeToggle">
+    <i class="fas fa-sun"></i>
+    <span id="themeToggleText">Modo Claro</span>
+</button>
 
 </div>
+</div>
+</nav></div>
 </header>
-<script>
-    let lastScrollY = window.scrollY;
-    window.addEventListener('scroll', () => {
-        const header = document.querySelector('header.app-header');
-        if (window.scrollY > lastScrollY) {
-            header.style.transform = 'translateY(-100%)';
-        } else {
-            header.style.transform = 'translateY(0)';
-        }
-        lastScrollY = window.scrollY;
-    });
-</script>
 <main class="container">
 <section class="tab-content active" id="dashboard">
 <div class="card">
@@ -929,20 +1510,20 @@ header i, nav i, .header i, .navbar i {
 <div class="form-grid">
 <div class="input-group">
 <label for="dashboardMonth">Mês de Referência</label>
-<input id="dashboardMonth" type="month"/>
+<input id="dashboardMonth" type="month">
 </div>
 <div class="input-group">
 <label for="previousMonthBalance">Saldo Mês Anterior (R$)</label>
-<input id="previousMonthBalance" step="0.01" type="number" value="0.00"/>
+<input id="previousMonthBalance" step="0.01" type="number" value="0.00">
 </div>
-<button class="btn btn-primary" id="loadDashboardMonth" type="button"><i class="fas fa-sync-alt"></i> Atualizar Mês</button>
+<button class="btn btn-success btn-small" id="loadDashboardMonth" type="button"><i class="fas fa-sync-alt"></i> Atualizar Mês</button>
 </div>
 <div class="stats-grid">
 <div class="stat-item"><i class="fas fa-arrow-down" style="color: var(--success)"></i><h3>Receitas</h3><p>R$ <span id="totalRealizedIncome">0.00</span></p></div>
-<div class="stat-item"><i class="fas fa-clipboard-list" style="color: var(--secondary)"></i><h3>Despesas Orçadas</h3><p>R$ <span id="totalBudgetExpenses">0.00</span></p></div>
+<div class="stat-item"><i class="fas fa-clipboard-list" style="color: var(--secondary)"></i><h3>Despesas Orçadas</h3><p>R$ <span id="totalBudgetExpenses">7765.34</span></p></div>
 <div class="stat-item"><i class="fas fa-arrow-up" style="color: var(--danger)"></i><h3>Despesas Realizadas</h3><p>R$ <span id="totalRealizedExpenses">0.00</span></p></div>
-<div class="stat-item"><i class="fas fa-tasks" style="color: var(--warning)"></i><h3>Saldo do Orçamento</h3><p>R$ <span id="budgetBalance">0.00</span></p></div>
-<div class="stat-item" style="grid-column: span 2;"><i class="fas fa-piggy-bank" style="color: var(--primary)"></i><h3>Saldo (Disponível)</h3><p class="positive">R$ <span id="cumulativeBalance">0.00</span></p></div>
+<div class="stat-item"><i class="fas fa-tasks" style="color: var(--warning)"></i><h3>Saldo do Orçamento</h3><p>R$ <span id="budgetBalance" class="positive">7765.34</span></p></div>
+<div class="stat-item" style="grid-column: span 2;"><i class="fas fa-piggy-bank" style="color: var(--primary)"></i><h3>Saldo (Disponível)</h3><p class="positive">R$ <span id="cumulativeBalance" class="zero">0.00</span></p></div>
 </div>
 </div>
 <div class="card">
@@ -950,59 +1531,541 @@ header i, nav i, .header i, .navbar i {
 <div class="comparativo-container">
 <div class="chart-wrapper">
 <h3>Orçado</h3>
-<canvas id="budgetDistributionChart"></canvas>
+<canvas id="budgetDistributionChart" style="box-sizing: border-box; display: block; height: 320px; width: 400px;" width="721" height="575"></canvas>
 </div>
 <div class="chart-wrapper">
 <h3>Realizado</h3>
-<canvas id="realizedDistributionChart"></canvas>
+<canvas id="realizedDistributionChart" style="box-sizing: border-box; display: block; height: 320px; width: 400px;" width="721" height="575"></canvas>
 </div>
 </div>
 </div>
 </section>
 <section class="tab-content" id="budget">
 <div class="budget-dashboard">
-<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-line" style="color: #28a745;"></i> Receitas Orçadas</h3><p>R$ <span id="budgetTotalIncome">0,00</span></p></div>
-<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-pie" style="color: #dc3545;"></i> Despesas Orçadas</h3><p>R$ <span id="budgetTotalExpenses">0,00</span></p></div>
-<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-balance-scale" style="color: #007bff;"></i> Saldo Orçado</h3><p>R$ <span id="budgetPlannedBalance">0,00</span></p></div>
+<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-line" style="color: #28a745;"></i> Receitas Orçadas</h3><p>R$ <span id="budgetTotalIncome">7951.10</span></p></div>
+<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-chart-pie" style="color: #dc3545;"></i> Despesas Orçadas</h3><p>R$ <span id="budgetTotalExpenses">7765.34</span></p></div>
+<div class="stat-item"><h3><i aria-hidden="true" class="fas fa-balance-scale" style="color: #007bff;"></i> Saldo Orçado</h3><p>R$ <span id="budgetPlannedBalance">185.76</span></p></div>
 </div>
 <div class="card">
 <h2>Orçamento Mensal Detalhado</h2>
 <div class="form-inline" style="margin-bottom: var(--spacing);">
 <div class="input-group">
 <label for="budgetMonth">Mês do Orçamento</label>
-<input id="budgetMonth" required="" type="month"/>
+<input id="budgetMonth" required="" type="month">
 </div>
-<button class="btn btn-primary" id="loadBudget" type="button"><i class="fas fa-search"></i> Carregar Mês</button>
+<button class="btn btn-success btn-small" id="loadBudget" type="button"><i class="fas fa-search"></i> Carregar Mês</button>
 </div>
-<div id="budgetDetailsContainer" style="display:none;">
+<div id="budgetDetailsContainer" style="display: block;">
 <div class="budget-section">
 <h3><i class="fas fa-hand-holding-usd"></i> Receitas Orçadas</h3>
 <div class="input-group" style="margin-bottom: var(--spacing);">
 <label for="budgetedGeneralIncome">Receita Geral Prevista (Ex: Salário)</label>
-<input id="budgetedGeneralIncome" min="0" step="0.01" type="number" value="0.00"/>
+<input id="budgetedGeneralIncome" min="0" step="0.01" type="number" value="0.00">
 </div>
 <h4><i class="fas fa-chart-line" style="color: #28a745;"></i> Outras Receitas / Investimentos</h4>
 <ul class="budget-item-list" data-type="income" id="incomeBudgetList">
-</ul>
+                     <li data-id="25d63235-d2d0-48fd-9484-a377bc7faa88" data-type="income">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Devolução de Matrícula</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">1878.16</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-success btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 </ul>
 <form class="add-budget-item-form" data-type="income" id="addIncomeItemForm">
 <div class="input-group">
 <label for="newIncomeItemDescription">Descrição da Receita</label>
-<input id="newIncomeItemDescription" placeholder="Ex: Renda Fixa, Dividendos" required="" type="text"/>
+<input id="newIncomeItemDescription" placeholder="Ex: Renda Fixa, Dividendos" required="" type="text">
 </div>
 <div class="input-group">
 <label for="newIncomeItemAmount">Valor Previsto (R$)</label>
-<input id="newIncomeItemAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
+<input id="newIncomeItemAmount" min="0" required="" step="0.01" type="number" value="0.00">
 </div>
 <button class="btn btn-success btn-small" type="submit"><i class="fas fa-plus"></i> Adicionar Receita</button>
 </form>
 </div>
 <div class="budget-section">
 <h3><i class="fas fa-receipt"></i> Despesas Orçadas</h3>
-<div id="expenseBudgetDetails">
-</div>
+<div id="expenseBudgetDetails"><div class="budget-category-section">
+                        <h4>Alimentação <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 1616.52)</span></h4>
+                        <ul class="budget-item-list" data-category="Alimentação" data-type="expense">
+                            
+                     <li data-id="2621cf6f-e83f-4b54-9471-66c33abc167b" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Rappi Pendente</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">416.52</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="28cad363-7cd2-4e33-9d84-b98d44e9ed79" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Supermercado</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">600.00</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="b0640251-08d2-4a28-89bc-992daa164e16" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Almoço Trabalho</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">600.00</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Alimentação" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Alimentação">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Alimentação" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Alimentação">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Alimentação" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Assinaturas <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 581.47)</span></h4>
+                        <ul class="budget-item-list" data-category="Assinaturas" data-type="expense">
+                            
+                     <li data-id="6afa3953-818c-4e0e-a69e-96ceb81ef7d0" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">ChatGPT</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">99.90</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="3e88d306-6efb-4b4f-8c26-2f65754c8810" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Apple One</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">89.90</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="b86e2891-3b05-43b6-9370-a6b6e4e7fda1" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Google One</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">9.99</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="5945ef82-645d-443e-8680-be14ffc48dfe" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Meli+</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">24.90</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="dcd6fa8d-6fc2-471a-a333-0ea85936d9d4" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Tim Leo</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">179.89</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="7e49f462-a969-44a1-852a-09122c0800a6" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Tim Camila</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">52.99</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="d3bd2862-1060-4cf7-ad71-1b8fa8393638" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">BLFibra</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">99.00</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="d9ade16d-651c-4623-afd5-941868e906eb" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Rappi Pro</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">24.90</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Assinaturas" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Assinaturas">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Assinaturas" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Assinaturas">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Assinaturas" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Bebê <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 0.00)</span></h4>
+                        <ul class="budget-item-list" data-category="Bebê" data-type="expense">
+                            <li style="border: none; color: var(--text-secondary); font-style: italic;">Nenhum item orçado para esta categoria.</li>
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Bebê" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Bebê">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Bebê" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Bebê">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Bebê" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Cartões de Crédito <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 2390.11)</span></h4>
+                        <ul class="budget-item-list" data-category="Cartões de Crédito" data-type="expense">
+                            
+                     <li data-id="37c6a2cf-7f94-419b-9678-3300d27b7f59" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Pernambucanas</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">271.46</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="dfc39233-a0e7-4810-9928-60672b24f1ce" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Inter Abril</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">1801.45</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="07c53a5a-ff50-4ee0-82d2-b6196f9d9bf5" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Inter Maio</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">317.20</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Cartões de Crédito" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Cartões de Crédito">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Cartões de Crédito" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Cartões de Crédito">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Cartões de Crédito" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Educação <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 0.00)</span></h4>
+                        <ul class="budget-item-list" data-category="Educação" data-type="expense">
+                            <li style="border: none; color: var(--text-secondary); font-style: italic;">Nenhum item orçado para esta categoria.</li>
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Educação" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Educação">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Educação" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Educação">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Educação" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Empréstimos <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 250.85)</span></h4>
+                        <ul class="budget-item-list" data-category="Empréstimos" data-type="expense">
+                            
+                     <li data-id="14579f23-b29a-480c-bd24-a44c820c2e1f" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">99 Leo</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">97.21</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="f16e0146-3190-437f-8908-c5cc1c18a86b" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">99 Camila</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">153.64</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Empréstimos" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Empréstimos">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Empréstimos" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Empréstimos">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Empréstimos" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Igreja <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 807.86)</span></h4>
+                        <ul class="budget-item-list" data-category="Igreja" data-type="expense">
+                            
+                     <li data-id="111fb3e7-1b5f-4938-a1c3-1fd01fd5d0e3" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Dízimo</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">807.86</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Igreja" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Igreja">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Igreja" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Igreja">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Igreja" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Impostos e Taxas <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 0.00)</span></h4>
+                        <ul class="budget-item-list" data-category="Impostos e Taxas" data-type="expense">
+                            <li style="border: none; color: var(--text-secondary); font-style: italic;">Nenhum item orçado para esta categoria.</li>
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Impostos e Taxas" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Impostos e Taxas">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Impostos e Taxas" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Impostos e Taxas">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Impostos e Taxas" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Lazer <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 0.00)</span></h4>
+                        <ul class="budget-item-list" data-category="Lazer" data-type="expense">
+                            <li style="border: none; color: var(--text-secondary); font-style: italic;">Nenhum item orçado para esta categoria.</li>
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Lazer" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Lazer">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Lazer" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Lazer">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Lazer" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Moradia <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 300.00)</span></h4>
+                        <ul class="budget-item-list" data-category="Moradia" data-type="expense">
+                            
+                     <li data-id="44c58b77-157e-4353-bd55-aa0ca5ca4320" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Luz</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">300.00</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Moradia" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Moradia">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Moradia" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Moradia">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Moradia" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Outros <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 654.92)</span></h4>
+                        <ul class="budget-item-list" data-category="Outros" data-type="expense">
+                            
+                     <li data-id="a4afbeab-8808-4f51-b3eb-553a80e11a9f" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Cartão Dolores</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">654.92</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Outros" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Outros">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Outros" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Outros">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Outros" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Saúde <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 563.61)</span></h4>
+                        <ul class="budget-item-list" data-category="Saúde" data-type="expense">
+                            
+                     <li data-id="14c9a9f9-2b9a-4102-936b-f7200407335f" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Venvanse</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">297.89</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="56cf251b-2b4e-4717-94e7-17992c9522fd" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Naratriptana</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">119.40</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="a441371d-1962-4f0c-87c2-10a8c1fe7ac0" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Dorflex</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">23.74</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="88a6687a-7a21-44cc-9d8a-51fcc4cd5afb" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Advil</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">68.67</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                     <li data-id="1cc5b19b-93c8-4422-9df3-74a7d5c5f654" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Neosoro</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">53.91</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Saúde" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Saúde">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Saúde" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Saúde">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Saúde" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Transporte <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 600.00)</span></h4>
+                        <ul class="budget-item-list" data-category="Transporte" data-type="expense">
+                            
+                     <li data-id="49e70736-656b-459d-adbe-61991304c2d1" data-type="expense">
+                         <div class="budget-item-details">
+                             <span contenteditable="true" data-field="description" placeholder="Descrição">Combustível</span>
+                             <span>R$ <span contenteditable="true" data-field="amount" placeholder="0.00">600.00</span></span>
+                         </div>
+                         <div class="budget-item-actions">
+                             <button class="btn btn-danger btn-small" aria-label="Excluir item"><i class="fas fa-trash"></i></button>
+                         </div>
+                     </li>
+                 
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Transporte" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Transporte">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Transporte" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Transporte">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Transporte" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div><div class="budget-category-section">
+                        <h4>Vestuário <span class="category-total" style="font-weight: normal; font-size: 0.9em; color: var(--text-secondary);">(Total: R$ 0.00)</span></h4>
+                        <ul class="budget-item-list" data-category="Vestuário" data-type="expense">
+                            <li style="border: none; color: var(--text-secondary); font-style: italic;">Nenhum item orçado para esta categoria.</li>
+                        </ul>
+                         <form class="add-budget-item-form" data-category="Vestuário" data-type="expense">
+                             <div class="input-group">
+                                 <label for="newExpenseItemDescription_Vestuário">Descrição da Despesa</label>
+                                 <input type="text" id="newExpenseItemDescription_Vestuário" placeholder="Ex: Aluguel, Luz" required="">
+                             </div>
+                             <div class="input-group">
+                                 <label for="newExpenseItemAmount_Vestuário">Valor Orçado (R$)</label>
+                                 <input type="number" id="newExpenseItemAmount_Vestuário" step="0.01" min="0" value="0.00" required="">
+                             </div>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                         </form>
+                     </div></div>
 </div>
 <div style="text-align: right; margin-top: var(--spacing);">
-<button class="btn btn-primary" id="saveBudget"><i class="fas fa-save"></i> Salvar Orçamento do Mês</button>
+<button class="btn btn-success btn-small" id="saveBudget"><i class="fas fa-save"></i> Salvar Orçamento do Mês</button>
 </div>
 </div>
 </div>
@@ -1013,21 +2076,21 @@ header i, nav i, .header i, .navbar i {
 <form class="form-grid" id="revenueForm">
 <div class="input-group">
 <label for="revenueDate">Data</label>
-<input id="revenueDate" required="" type="date"/>
+<input id="revenueDate" required="" type="date">
 </div>
 <div class="input-group">
 <label for="revenueDescription">Descrição</label>
-<input id="revenueDescription" placeholder="Ex: Salário, Venda..." required="" type="text"/>
+<input id="revenueDescription" placeholder="Ex: Salário, Venda..." required="" type="text">
 </div>
 <div class="input-group">
 <label for="revenueSource">Origem (Opcional)</label>
-<input id="revenueSource" placeholder="Ex: Empresa X, Cliente Y" type="text"/>
+<input id="revenueSource" placeholder="Ex: Empresa X, Cliente Y" type="text">
 </div>
 <div class="input-group">
 <label for="revenueAmount">Valor (R$)</label>
-<input id="revenueAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
+<input id="revenueAmount" min="0" required="" step="0.01" type="number" value="0.00">
 </div>
-<button class="btn btn-success" type="submit"><i class="fas fa-plus"></i> Adicionar Receita</button>
+<button class="btn btn-success btn-small" type="submit"><i class="fas fa-plus"></i> Adicionar Receita</button>
 </form>
 </div>
 <div class="card">
@@ -1035,21 +2098,21 @@ header i, nav i, .header i, .navbar i {
 <form class="form-grid" id="expenseForm">
 <div class="input-group">
 <label for="expenseDate">Data</label>
-<input id="expenseDate" required="" type="date"/>
+<input id="expenseDate" required="" type="date">
 </div>
 <div class="input-group">
 <label for="expenseDescription">Descrição</label>
-<input id="expenseDescription" placeholder="Ex: Aluguel, Supermercado..." required="" type="text"/>
+<input id="expenseDescription" placeholder="Ex: Aluguel, Supermercado..." required="" type="text">
 </div>
 <div class="input-group">
 <label for="expenseCategorySelect">Categoria</label>
-<select id="expenseCategorySelect" required=""></select>
+<select id="expenseCategorySelect" required=""><option value="" disabled="">Selecione...</option><option value="Alimentação">Alimentação</option><option value="Assinaturas">Assinaturas</option><option value="Bebê">Bebê</option><option value="Cartões de Crédito">Cartões de Crédito</option><option value="Educação">Educação</option><option value="Empréstimos">Empréstimos</option><option value="Igreja">Igreja</option><option value="Impostos e Taxas">Impostos e Taxas</option><option value="Lazer">Lazer</option><option value="Moradia">Moradia</option><option value="Outros">Outros</option><option value="Saúde">Saúde</option><option value="Transporte">Transporte</option><option value="Vestuário">Vestuário</option></select>
 </div>
 <div class="input-group">
 <label for="expenseAmount">Valor (R$)</label>
-<input id="expenseAmount" min="0" required="" step="0.01" type="number" value="0.00"/>
+<input id="expenseAmount" min="0" required="" step="0.01" type="number" value="0.00">
 </div>
-<button class="btn btn-danger" type="submit"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+<button class="btn btn-danger btn-small" type="submit"><i class="fas fa-plus"></i> Adicionar Despesa</button>
 </form>
 </div>
 <div class="card">
@@ -1057,18 +2120,16 @@ header i, nav i, .header i, .navbar i {
 <div style="margin-bottom: var(--spacing); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
 <div class="input-group" style="max-width: 250px; margin-bottom: 0;">
 <label for="transactionFilterMonth">Filtrar por Mês</label>
-<input id="transactionFilterMonth" type="month"/>
+<input id="transactionFilterMonth" type="month">
 </div>
-<button class="btn btn-danger" id="clearAll"><i class="fas fa-trash-alt"></i> Limpar Todas Transações</button>
+<button class="btn btn-danger btn-small" id="clearAll"><i class="fas fa-trash-alt"></i> Limpar Todas Transações</button>
 </div>
 <div class="editable-table-container">
 <table class="editable-table" id="transactionsTable">
 <thead>
 <tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Categoria/Origem</th><th>Valor</th><th>Ações</th></tr>
 </thead>
-<tbody>
-<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">Nenhuma transação encontrada.</td></tr>
-</tbody>
+<tbody><tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-secondary);">Nenhuma transação encontrada para 2025-05.</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -1080,13 +2141,81 @@ header i, nav i, .header i, .navbar i {
 <form class="form-inline" id="addCategoryForm">
 <div class="input-group">
 <label for="newCategory">Nova Categoria</label>
-<input id="newCategory" placeholder="Ex: Assinaturas, Impostos" type="text"/>
+<input id="newCategory" placeholder="Ex: Assinaturas, Impostos" type="text">
 </div>
-<button class="btn btn-primary" id="addCategory" type="submit"><i class="fas fa-plus"></i> Adicionar Categoria</button>
+<button class="btn btn-danger btn-small" id="addCategory" type="submit"><i class="fas fa-plus"></i> Adicionar Categoria</button>
 </form>
 <div class="category-manager">
-<p style="color: var(--text-secondary);">Nenhuma categoria de despesa criada.</p>
-</div>
+                        <div class="category-tag" data-category="Alimentação">
+                            Alimentação
+                            <button class="delete-category" aria-label="Excluir categoria Alimentação"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Assinaturas">
+                            Assinaturas
+                            <button class="delete-category" aria-label="Excluir categoria Assinaturas"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Bebê">
+                            Bebê
+                            <button class="delete-category" aria-label="Excluir categoria Bebê"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Cartões de Crédito">
+                            Cartões de Crédito
+                            <button class="delete-category" aria-label="Excluir categoria Cartões de Crédito"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Educação">
+                            Educação
+                            <button class="delete-category" aria-label="Excluir categoria Educação"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Empréstimos">
+                            Empréstimos
+                            <button class="delete-category" aria-label="Excluir categoria Empréstimos"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Igreja">
+                            Igreja
+                            <button class="delete-category" aria-label="Excluir categoria Igreja"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Impostos e Taxas">
+                            Impostos e Taxas
+                            <button class="delete-category" aria-label="Excluir categoria Impostos e Taxas"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Lazer">
+                            Lazer
+                            <button class="delete-category" aria-label="Excluir categoria Lazer"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Moradia">
+                            Moradia
+                            <button class="delete-category" aria-label="Excluir categoria Moradia"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Outros">
+                            Outros
+                            <button class="delete-category" aria-label="Excluir categoria Outros"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Saúde">
+                            Saúde
+                            <button class="delete-category" aria-label="Excluir categoria Saúde"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Transporte">
+                            Transporte
+                            <button class="delete-category" aria-label="Excluir categoria Transporte"><i class="fas fa-times"></i></button>
+                        </div>
+                    
+                        <div class="category-tag" data-category="Vestuário">
+                            Vestuário
+                            <button class="delete-category" aria-label="Excluir categoria Vestuário"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
 </div>
 </section>
 </main>
@@ -1096,7 +2225,6 @@ header i, nav i, .header i, .navbar i {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://apis.google.com/js/api.js"></script>
 <script>
         'use strict';
 
@@ -1292,6 +2420,7 @@ header i, nav i, .header i, .navbar i {
                  // This function is called when a tab button is clicked
                  // It handles loading data or setting up the view for the newly active tab
                  // Visual switching is handled by setupTabs
+                 console.log(`Switching to tab: ${tabId}`);
                  switch (tabId) {
                      case 'dashboard':
                           this.currentDashboardMonth = document.getElementById('dashboardMonth').value || new Date().toISOString().slice(0, 7);
@@ -1785,7 +2914,7 @@ header i, nav i, .header i, .navbar i {
                                  <label for="newExpenseItemAmount_${category}">Valor Orçado (R$)</label>
                                  <input type="number" id="newExpenseItemAmount_${category}" step="0.01" min="0" value="0.00" required>
                              </div>
-                             <button type="submit" class="btn btn-primary btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
+                             <button type="submit" class="btn btn-danger btn-small"><i class="fas fa-plus"></i> Adicionar Despesa</button>
                          </form>
                      `;
                     container.appendChild(categorySection);
@@ -2486,7 +3615,7 @@ header i, nav i, .header i, .navbar i {
                 const a = document.createElement('a');
                 a.href = url;
                  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-                a.download = `financas360_dados_${timestamp}.json`;
+                a.download = `financas360_dados_${timestamp}.fin`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -3170,330 +4299,136 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- Google Identity & Picker -->
-<script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
-<script src="https://apis.google.com/js/api.js?onload=gapiLoaded"></script>
-
+<div id="newsvd_popupMenu" style="display: none;"></div><div id="newsvd_popupMenu"></div><div id="newsvdPrice" class="newsvd_mengceng" style="display: none;"></div>
 <script>
-/* ======= GOOGLE DRIVE INTEGRATION (MULTI-USER) ======= */
-// Replace with your app credentials (Client ID and API Key are NOT secret)
-const CLIENT_ID = '748081435922-691j3oqmg5l2ajb1jge69lf9dgucgg0n.apps.googleusercontent.com';
-const API_KEY   = 'AIzaSyDSvh_aeKlVrSFS-usGqTiys6rt25J0Nwk';
-const APP_ID    = '748081435922';  
-
-const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.metadata.readonly';
-
-// Global variables
-let tokenClient;
-let accessToken = null;
-let pickerApiLoaded = false;
-
-// On load, gapiLoaded is called from api.js
-function gapiLoaded() {
-    gapi.load('client:picker', initializeGapiClient);
-}
-
-async function initializeGapiClient() {
-    try {
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-        });
-        pickerApiLoaded = true;
-        maybeEnableButtons();
-    } catch (err) {
-        console.error('gapi.client.init error', err);
-    }
-}
-
-// Called by GIS onload
-function gisLoaded() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        prompt: '',
-        callback: handleTokenResponse,
-        error_callback: (err) => {
-            console.error('OAuth error', err);
-            alert('Erro de autenticação Google: ' + (err.error || JSON.stringify(err)));
-        }
-    });
-    document.getElementById('google-connect-btn').addEventListener('click', () => {
-        tokenClient.requestAccessToken({ prompt: 'consent' });
-    });
-    document.getElementById('google-logout-btn').addEventListener('click', signOut );
-}
-
-function handleTokenResponse(response) {
-    if (response.error !== undefined) {
-        alert('Erro ao obter token: ' + response.error);
-        return;
-    }
-    accessToken = response.access_token;
-    console.log('Google accessToken acquired');
-    document.getElementById('google-connect-btn').style.display = 'none';
-    document.getElementById('google-logout-btn').style.display = 'inline-block';
-    maybeEnableButtons();
-    loadLastDriveFile();
-}
-
-function signOut() {
-    if (accessToken) {
-        google.accounts.oauth2.revoke(accessToken, () => {
-            accessToken = null;
-            document.getElementById('google-connect-btn').style.display = 'inline-block';
-            document.getElementById('google-logout-btn').style.display = 'none';
-            toggleDriveButtons(false);
-            console.log('Google disconnected');
+document.addEventListener('DOMContentLoaded', function () {
+    const toggleBtn = document.getElementById('toggleHeaderBar');
+    const navTabs = document.querySelector('.nav-tabs');
+    if (toggleBtn && navTabs) {
+        toggleBtn.addEventListener('click', () => {
+            navTabs.classList.toggle('collapsed');
         });
     }
-}
-
-function maybeEnableButtons() {
-    const openBtn = document.getElementById('driveOpenBtn');
-    const saveBtn = document.getElementById('driveSaveBtn');
-    if (pickerApiLoaded && accessToken) {
-        openBtn.disabled = false;
-        saveBtn.disabled = false;
-    }
-}
-
-// ----- UI BUTTONS in ACTIONS MENU -----
-function createDriveButtons() {
-    const actions = document.getElementById('filters-actions') || document.body;
-    const openBtn = document.createElement('button');
-    openBtn.id = 'btn-open-drive';
-    openBtn.textContent = '📂 Abrir do Drive';
-    openBtn.disabled = true;
-    openBtn.className = 'btn-add';
-    openBtn.onclick = openFromDrive;
-    actions.appendChild(openBtn);
-
-    const saveBtn = document.createElement('button');
-    saveBtn.id = 'btn-save-drive';
-    saveBtn.textContent = '💾 Salvar no Drive';
-    saveBtn.disabled = true;
-    saveBtn.className = 'btn-add';
-    saveBtn.onclick = saveToDrive;
-    actions.appendChild(saveBtn);
-}
-
-document.addEventListener('DOMContentLoaded', createDriveButtons);
-
-// ----- DRIVE OPERATIONS -----
-function openFromDrive() {
-    if (!pickerApiLoaded || !accessToken) return;
-    const view = new google.picker.View(google.picker.ViewId.DOCS);
-    view.setMimeTypes('application/json');
-
-    const picker = new google.picker.PickerBuilder()
-        .setAppId(APP_ID)
-        .setOAuthToken(accessToken)
-        .addView(view)
-        .setDeveloperKey(API_KEY)
-        .setCallback(pickerCallback)
-        .build();
-    picker.setVisible(true);
-}
-
-function pickerCallback(data) {
-    if (data.action === google.picker.Action.PICKED) {
-        const fileId = data.docs[0].id;
-        gapi.client.drive.files.get({
-            fileId: fileId,
-            alt: 'media'
-        }).then(res => {
-            const content = res.body;
-            try {
-                const jsonData = JSON.parse(content);
-                // Implement your app's import logic here
-                if (window.importStateFromJSON) {
-                    window.importStateFromJSON(jsonData);
-                    alert('Dados importados do Google Drive!');
-                }
-            } catch (e) {
-                alert('Erro ao ler o arquivo JSON selecionado.');
-            }
-        });
-    }
-}
-
-function saveToDrive() {
-    if (!accessToken) return;
-    if (!window.exportStateToJSON) {
-        alert('Função exportStateToJSON não encontrada.');
-        return;
-    }
-    const fileContent = JSON.stringify(window.exportStateToJSON());
-    const metadata = {
-        name: 'financas360_dados.json',
-        mimeType: 'application/json'
-    };
-    const boundary = '-------314159265358979323846';
-    const delimiter = "\r\n--" + boundary + "\r\n";
-    const closeDelim = "\r\n--" + boundary + "--";
-    const multipartRequestBody =
-        delimiter +
-        "Content-Type: application/json\r\n\r\n" +
-        JSON.stringify(metadata) +
-        delimiter +
-        "Content-Type: application/json\r\n\r\n" +
-        fileContent +
-        closeDelim;
-
-    const request = gapi.client.request({
-        path: '/upload/drive/v3/files',
-        method: 'POST',
-        params: { uploadType: 'multipart' },
-        headers: { 'Content-Type': 'multipart/related; boundary="' + boundary + '"' },
-        body: multipartRequestBody
-    });
-    request.execute((file) => {
-        if (file && file.id) {
-            alert('Arquivo salvo no seu Google Drive!');
-        } else {
-            alert('Falha ao salvar no Drive.');
-            console.error(file);
-        }
-    });
-}
-
-function loadLastDriveFile() {
-    if (!accessToken) return;
-    gapi.client.drive.files.list({
-        q: "name='financas360_dados.json' and trashed=false",
-        orderBy: 'modifiedTime desc',
-        pageSize: 1,
-        fields: 'files(id, name)'
-    }).then(res => {
-        const files = res.result.files;
-        if (files && files.length > 0) {
-            const fileId = files[0].id;
-            gapi.client.drive.files.get({
-                fileId: fileId,
-                alt: 'media'
-            }).then(r => {
-                const content = r.body;
-                try {
-                    const jsonData = JSON.parse(content);
-                    if (window.importStateFromJSON) {
-                        window.importStateFromJSON(jsonData);
-                        console.log('Último estado carregado do Drive.');
-                    }
-                } catch (e) {
-                    console.error('Erro ao carregar JSON do Drive', e);
-                }
-            });
-        }
-    });
-}
-
-function toggleDriveButtons(enabled) {
-    document.getElementById('driveOpenBtn').disabled = !enabled;
-    document.getElementById('driveSaveBtn').disabled = !enabled;
-}
-
+});
 </script>
 
-    /* ======= GOOGLE DRIVE INTEGRATION (CORREÇÕES) ======= */
-    let pickerInitialized = false;
 
-    function initializePicker() {
-        return new Promise((resolve) => {
-            if(pickerInitialized) return resolve();
-            
-            gapi.load('client:picker', () => {
-                gapi.client.init({
-                    apiKey: API_KEY,
-                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-                }).then(() => {
-                    pickerInitialized = true;
-                    resolve();
-                }).catch(error => {
-                    console.error('Erro ao inicializar Picker:', error);
-                    alert('Erro ao inicializar integração com Google Drive');
-                });
-            });
-        });
-    }
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const header = document.querySelector('.app-header');
+    const toggleBtn = document.getElementById('toggleHeaderBar');
+    if (toggleBtn) toggleBtn.addEventListener('click', () => {
+        header.classList.toggle('collapsed');
+        document.body.classList.toggle('collapsed-header');
+    });
+});
+</script>
 
-    async function openFromDrive() {
-        try {
-            if(!accessToken) {
-                alert('Por favor, conecte-se ao Google primeiro');
-                return;
-            }
-            
-            await initializePicker();
-            
-            const view = new google.picker.View(google.picker.ViewId.DOCS);
-            view.setMimeTypes('application/json');
-            
-            const picker = new google.picker.PickerBuilder()
-                .setAppId(APP_ID)
-                .setOAuthToken(accessToken)
-                .addView(view)
-                .setDeveloperKey(API_KEY)
-                .setCallback(pickerCallback)
-                .build();
-            
-            picker.setVisible(true);
-        } catch (error) {
-            console.error('Erro ao abrir arquivo:', error);
-            alert('Erro ao acessar Google Drive: ' + error.message);
-        }
-    }
 
-    async function saveToDrive() {
-        try {
-            if(!accessToken) {
-                alert('Por favor, conecte-se ao Google primeiro');
-                return;
-            }
-            
-            const fileContent = JSON.stringify(financeManager.state);
-            const metadata = {
-                name: `financas360_${new Date().toISOString().split('T')[0]}.json`,
-                mimeType: 'application/json'
-            };
-            
-            const form = new FormData();
-            form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
-            form.append('file', new Blob([fileContent], {type: 'application/json'}));
-            
-            const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                method: 'POST',
-                headers: new Headers({'Authorization': 'Bearer ' + accessToken}),
-                body: form
-            });
-            
-            if(!response.ok) throw new Error('Falha no upload: ' + response.statusText);
-            
-            const result = await response.json();
-            alert('Arquivo salvo com sucesso no Google Drive!');
-        } catch (error) {
-            console.error('Erro ao salvar arquivo:', error);
-            alert('Erro ao salvar no Google Drive: ' + error.message);
-        }
-    }
 
-    // Event Listeners atualizados
-    document.getElementById('driveOpenBtn').addEventListener('click', openFromDrive);
-    document.getElementById('driveSaveBtn').addEventListener('click', saveToDrive);
 
-    // Gerenciamento do dropdown
-    document.getElementById('actionsButton').addEventListener('click', function(e) {
+
+<script>
+// Robust toggle for Actions dropdown
+document.addEventListener('DOMContentLoaded', function() {
+    const actionsBtn = document.getElementById('actionsButton');
+    const dropdown = document.getElementById('actionsDropdownContent');
+    if (!actionsBtn || !dropdown) return;
+
+    actionsBtn.addEventListener('click', function(e) {
         e.stopPropagation();
-        const dropdown = document.getElementById('actionsDropdownContent');
         dropdown.classList.toggle('show');
     });
 
-    window.addEventListener('click', function(e) {
-        const dropdown = document.getElementById('actionsDropdownContent');
-        if(!e.target.closest('.actions-dropdown') && dropdown.classList.contains('show')) {
+    // Close when clicking outside dropdown
+    document.addEventListener('click', function(event) {
+        if (!actionsBtn.contains(event.target) && !dropdown.contains(event.target)) {
             dropdown.classList.remove('show');
         }
     });
+});
+</script>
 
-</body>
-</html>
+
+<script>
+// Header toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const header = document.querySelector('.app-header');
+    const toggleBtn = document.getElementById('toggleHeaderBar');
+    if (toggleBtn && header) {
+        toggleBtn.addEventListener('click', function() {
+            header.classList.toggle('collapsed');
+        });
+    }
+});
+</script>
+
+
+<script>
+// Header toggle
+document.addEventListener('DOMContentLoaded', function(){
+  const header = document.querySelector('.app-header');
+  const toggleBtn = document.getElementById('toggleHeaderBar');
+  if(toggleBtn && header){
+    toggleBtn.addEventListener('click', ()=>{ header.classList.toggle('collapsed'); });
+  }
+
+  // Actions dropdown
+  const actionsBtn = document.getElementById('actionsButton');
+  const dropdown = document.getElementById('actionsDropdownContent');
+  if(actionsBtn && dropdown){
+    actionsBtn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      dropdown.classList.toggle('show');
+    });
+    document.addEventListener('click', (evt)=>{
+      if(!actionsBtn.contains(evt.target) && !dropdown.contains(evt.target)){
+        dropdown.classList.remove('show');
+      }
+    });
+  }
+});
+</script>
+
+
+<script>
+// Header toggle & actions dropdown script (single source of truth)
+document.addEventListener('DOMContentLoaded', ()=>{
+  const header = document.querySelector('.app-header');
+  const toggleBtn = document.getElementById('toggleHeaderBar');
+  if(toggleBtn){ toggleBtn.addEventListener('click', ()=> header.classList.toggle('collapsed')); }
+
+  const actionsBtn = document.getElementById('actionsButton');
+  const dropdown = document.getElementById('actionsDropdownContent');
+  if(actionsBtn && dropdown){
+     actionsBtn.addEventListener('click', e=>{
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+     });
+     document.addEventListener('click', e=>{
+        if(!actionsBtn.contains(e.target) && !dropdown.contains(e.target)){
+            dropdown.classList.remove('show');
+        }
+     });
+  }
+});
+</script>
+
+
+<script>
+// Add data-label to transaction cells for responsive view
+document.addEventListener('DOMContentLoaded', function(){
+  const table = document.getElementById('transactionsTable');
+  if(!table) return;
+  const headers = Array.from(table.querySelectorAll('thead th')).map(th=>th.innerText.trim());
+  table.querySelectorAll('tbody tr').forEach(row=>{
+    Array.from(row.children).forEach((cell, idx)=>{
+      if(idx < headers.length){
+        cell.setAttribute('data-label', headers[idx]);
+      }
+    });
+  });
+});
+</script>
+
+</body></html>
