@@ -1461,13 +1461,396 @@ a:hover {
         color: var(--text-secondary);
     }
 }
+
+/* === macOS Sonoma Style Overrides === */
+:root {
+    --primary: #64D2FF;        /* Sonoma pastel blue */
+    --primary-hover: #0A84FF;
+    --card-radius: 1.5rem;      /* 24px corners */
+    --button-radius: 1.25rem;   /* 20px pill shape */
+    --shadow-elevated: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* Glassy backdrop on key elements */
+.app-header,
+.card,
+.dropdown-content,
+.nav-btn,
+.header-toggle-btn-fixed {
+    backdrop-filter: blur(30px) saturate(200%);
+    background-color: rgba(255,255,255,0.6) !important;
+}
+
+/* Dark theme glass */
+[data-theme="dark"] .app-header,
+[data-theme="dark"] .card,
+[data-theme="dark"] .dropdown-content,
+[data-theme="dark"] .nav-btn,
+[data-theme="dark"] .header-toggle-btn-fixed {
+    background-color: rgba(20,20,25,0.6) !important;
+}
+
+/* Unified rounded corners */
+.card, .btn, .nav-btn, .header-toggle-btn-fixed {
+    border-radius: var(--card-radius) !important;
+}
+
+/* Elevated shadows */
+.card {
+    box-shadow: var(--shadow-elevated) !important;
+}
+
+/* Active nav pill accent */
+.nav-btn.active {
+    background-color: var(--primary) !important;
+    box-shadow: 0 4px 12px rgba(100,210,255,0.3) !important;
+    color: white !important;
+}
+
+/* Toggle button accent icon */
+.header-toggle-btn-fixed i {
+    color: var(--primary) !important;
+}
+
+/* Heading accent */
+h1, h2, h3, h4, h5, h6,
+.header-content .app-title {
+    color: var(--primary) !important;
+}
+
+/* Text color adjustments */
+body {
+    color: #1C1C1E;
+}
+[data-theme="dark"] body {
+    color: #E5E5EA;
+}
+
+/* === Steve Jobs Inspired Perfectionist Style === */
+:root {
+    --primary: #007AFF;             /* iOS signature blue */
+    --primary-hover: #005FCC;
+    --accent: #34C759;              /* subtle green for highlights */
+    --text: #1C1C1E;
+    --background: #FAFAFA;
+    --surface: #FFFFFF;
+    --border: #E0E0E0;
+    --radius: 1rem;
+    --shadow: 0 8px 24px rgba(0,0,0,0.1);
+    --font-base: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* Typography: elegance and readability */
+body {
+    font-family: var(--font-base);
+    color: var(--text);
+    background: var(--background);
+    font-weight: 400;
+    font-size: 1rem;
+    letter-spacing: 0.003em;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+}
+
+/* Header: clean translucent bar */
+.app-header {
+    backdrop-filter: blur(20px) saturate(180%);
+    background: rgba(255,255,255,0.8) !important;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.08);
+    border-bottom: 1px solid var(--border);
+}
+
+/* Title */
+.header-content .app-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Cards: light, precise, deep */
+.card, .dropdown-content {
+    background: var(--surface) !important;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    border: 1px solid var(--border);
+}
+
+/* Buttons: pill, elevated, responsive */
+.btn, .nav-btn, .header-toggle-btn-fixed, .theme-toggle {
+    border: none;
+    border-radius: 999px;
+    padding: 0.6rem 1.4rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    background: var(--primary);
+    color: #fff;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.btn:hover, .nav-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+.nav-btn.active {
+    background: var(--accent);
+}
+
+/* Inputs: spacious and subtle */
+input, select, textarea {
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    background: #fff;
+    color: var(--text);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* Tables: precision lines */
+#transactionsTable, .editable-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+#transactionsTable th, .editable-table th {
+    background: #F5F5F7;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+}
+#transactionsTable td, .editable-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5 {
+    font-weight: 600;
+    color: var(--primary);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.6em;
+}
+
+/* === elementary OS 8 Style Overrides === */
+:root {
+    --primary: #268BD2;            /* elementary blue */
+    --primary-hover: #1B6FA8;
+    --background: #F5F6F7;
+    --surface: #FFFFFF;
+    --border: #DADCE0;
+    --text: #333333;
+    --radius: 0.75rem;
+    --shadow-elevated: 0 4px 12px rgba(0,0,0,0.08);
+    --font-base: 'Inter', 'Ubuntu', sans-serif;
+}
+
+body {
+    font-family: var(--font-base) !important;
+    background: var(--background) !important;
+    color: var(--text) !important;
+}
+
+/* Header minimalist flat */
+.app-header {
+    backdrop-filter: none !important;
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-elevated);
+}
+
+.header-content .app-title {
+    color: var(--primary) !important;
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+
+/* Cards */
+.card, .dropdown-content {
+    background: var(--surface) !important;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-elevated);
+    padding: 1.75rem;
+}
+
+/* Buttons */
+.btn, .nav-btn, .header-toggle-btn-fixed, .theme-toggle {
+    border-radius: var(--radius);
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 500;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 6px rgba(38,139,210,0.25);
+}
+.btn:hover, .nav-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 10px rgba(27,111,168,0.3);
+}
+.nav-btn.active {
+    background: var(--primary-hover);
+}
+
+/* Inputs */
+input, select, textarea {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+}
+
+/* Tables */
+#transactionsTable, .editable-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+#transactionsTable th, .editable-table th {
+    background: #EEF1F3;
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+#transactionsTable td, .editable-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* Navigation tabs scroll aesthetics */
+.nav-tabs {
+    gap: 0.5rem;
+}
 </style>
 <style>
 /* Color header icons */
 header i, nav i, .header i, .navbar i {
     color: var(--accent-color) !important;
 }
-</style></head>
+</style>
+<style id="full-dark-overrides">
+/* === Global Dark Mode Overrides (2025‑05‑07) === */
+[data-theme="dark"] {
+  --background: #0f172a;
+  --surface: #1e293b;
+  --text: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border: #334155;
+  --primary: #64D2FF;
+  --primary-hover: #0A84FF;
+  --accent: #5e5ce6;
+  --success: #34d399;
+  --danger: #f87171;
+  --warning: #fbbf24;
+}
+
+/* Apply dark surfaces */
+[data-theme="dark"] body,
+[data-theme="dark"] .card,
+[data-theme="dark"] .dropdown-content,
+[data-theme="dark"] .nav-btn,
+[data-theme="dark"] .btn,
+[data-theme="dark"] .header-toggle-btn-fixed,
+[data-theme="dark"] .budget-item-list li,
+[data-theme="dark"] .budget-item-list li:hover,
+[data-theme="dark"] .stat-item,
+[data-theme="dark"] .add-budget-item-form,
+[data-theme="dark"] #transactionsTable tr,
+[data-theme="dark"] .editable-table tbody tr {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Inputs and form fields */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--background) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+/* Table headers */
+[data-theme="dark"] #transactionsTable th,
+[data-theme="dark"] .editable-table th {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Editable spans */
+[data-theme="dark"] .budget-item-details span[contenteditable="true"] {
+  background: var(--surface) !important;
+}
+</style>
+
+
+<style id="aero-glass">
+/* === Aero Glass Transparency Overrides (2025‑05‑07) === */
+[data-theme="dark"] .glass,
+[data-theme="dark"] .card,
+[data-theme="dark"] .dropdown-content,
+[data-theme="dark"] .nav-btn,
+[data-theme="dark"] .btn,
+[data-theme="dark"] .header-toggle-btn-fixed,
+[data-theme="dark"] .budget-item-list li,
+[data-theme="dark"] .stat-item,
+[data-theme="dark"] .add-budget-item-form,
+[data-theme="dark"] #transactionsTable tr,
+[data-theme="dark"] .editable-table tbody tr {
+    background: rgba(30, 41, 59, 0.55) !important; /* translucent slate */
+    backdrop-filter: blur(12px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+    border-color: rgba(51, 65, 85, 0.35) !important;
+}
+
+[data-theme="dark"] body {
+    background: rgba(15, 23, 42, 0.9) !important;
+    backdrop-filter: blur(8px) !important;
+}
+</style>
+
+
+<style id="aero-glass-actions">
+/* === Aero Glass Transparency for Actions Window (2025‑05‑07) === */
+[data-theme="dark"] #actionsDropdownContent,
+[data-theme="dark"] .actions-dropdown .dropdown-content,
+[data-theme="dark"] .dropdown-content.show {
+    background: rgba(30, 41, 59, 0.55) !important;
+    backdrop-filter: blur(12px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+    border-color: rgba(51, 65, 85, 0.35) !important;
+}
+</style>
+
+
+<style id="aero-glass-actions-light">
+/* === Aero Glass Transparency for Actions Window – Light Mode (2025‑05‑07) === */
+:root[data-theme="light"],
+html:not([data-theme]), body:not([data-theme]) {
+    --glass-bg-light: rgba(255, 255, 255, 0.55);
+    --glass-border-light: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] #actionsDropdownContent,
+[data-theme="light"] .actions-dropdown .dropdown-content,
+[data-theme="light"] .dropdown-content.show,
+html:not([data-theme]) #actionsDropdownContent,
+html:not([data-theme]) .actions-dropdown .dropdown-content,
+html:not([data-theme]) .dropdown-content.show {
+    background: var(--glass-bg-light) !important;
+    backdrop-filter: blur(12px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+    border: 1px solid var(--glass-border-light) !important;
+}
+</style>
+
+</head>
 <body inject_newsvd="true">
 <button id="toggleHeaderBar" class="header-toggle-btn-fixed" aria-label="Mostrar/ocultar cabeçalho">
   <i class="fas fa-bars"></i>
@@ -3903,6 +4286,10 @@ header i, nav i, .header i, .navbar i {
                        const cellPadding = 2;
 
                       // --- Helper Functions ---
+// Temporarily set light theme for PDF export
+const originalTheme = document.documentElement.getAttribute('data-theme');
+document.documentElement.setAttribute('data-theme', 'light');
+
                        const addHeaderFooter = (pageNumber, pageCount) => {
                            // Header
                            doc.setFillColor(getComputedStyle(document.documentElement).getPropertyValue('--primary'));
@@ -4045,6 +4432,14 @@ header i, nav i, .header i, .navbar i {
 
 
                        // Section 4: Orçamento Detalhado
+// Ensure new page for Orçamento Detalhado
+const pageHeight = doc.internal.pageSize.getHeight();
+if (yOffset + (lineSpacing * 3) > pageHeight - 20) {
+    doc.addPage();
+    yOffset = 20;
+    addHeaderFooter(doc.internal.pages.length, doc.internal.pages.length);
+}
+
                        addSectionTitle('Orçamento Detalhado');
                        const budgetTableBody = [];
                        budgetTableBody.push([{ content: 'Receitas Orçadas', colSpan: 3, styles: { fontStyle: 'bold', fillColor: themeColors.backgroundRgb } }]);
@@ -4086,12 +4481,19 @@ header i, nav i, .header i, .navbar i {
 
 
                       // Finalize and Save
-                      const pageCount = doc.internal.pages.length;
+                      const pageCount = doc.getNumberOfPages();
                       for (let i = 1; i <= pageCount; i++) {
                           doc.setPage(i);
                           addHeaderFooter(i, pageCount); // Update footers with final page count
                       }
                       doc.save(`Relatorio_Financeiro_${month}.pdf`);
+// Restore original theme
+if (originalTheme) {
+    document.documentElement.setAttribute('data-theme', originalTheme);
+} else {
+    document.documentElement.removeAttribute('data-theme');
+}
+
 
                  } catch (error) {
                       console.error('Erro fatal ao gerar PDF:', error);
@@ -4132,17 +4534,7 @@ header i, nav i, .header i, .navbar i {
 
     </script>
 <script>
-FinanceManager.prototype.exportToPDF = function () {
-    const originalTheme = document.documentElement.getAttribute('data-theme');
-    document.documentElement.setAttribute('data-theme', 'light');
 
-    // Determine report month
-    let monthInput = document.getElementById('budgetMonth');
-    let month = monthInput && monthInput.value ? monthInput.value : new Date().toISOString().slice(0,7);
-    this.currentBudgetMonth = month;
-    try { this.ensureMonthData(month); } catch(e){}
-
-    const sum = this.calculateMonthSummary(month) || {};
     const doc = new jspdf.jsPDF('p', 'pt', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 40;
