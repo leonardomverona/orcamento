@@ -1850,6 +1850,27 @@ html:not([data-theme]) .dropdown-content.show {
 }
 </style>
 
+
+<style id="mobile-card-fix">
+/* === Mobile Card Overflow Fix (2025‑05‑07) === */
+@media (max-width: 480px){
+  /* Ensure card content fits viewport */
+  .card{
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      padding: 1rem !important;
+  }
+  /* Single‑column stats grid and tighter gap */
+  .stats-grid{
+      grid-template-columns: 1fr !important;
+      gap: 1rem !important;
+  }
+  .stats-grid .stat-item{
+      padding: 1rem !important;
+  }
+}
+</style>
+
 </head>
 <body inject_newsvd="true">
 <button id="toggleHeaderBar" class="header-toggle-btn-fixed" aria-label="Mostrar/ocultar cabeçalho">
